@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+    document.documentElement.classList.add("js-ready");
+    initializeNavToggles();
+
     const tiltCards = document.querySelectorAll("[data-tilt]");
 
     tiltCards.forEach((card) => {
@@ -45,6 +48,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
     initializeAuthValidation();
 });
+
+function initializeNavToggles() {
+    const toggles = document.querySelectorAll("[data-nav-toggle]");
+
+    if (toggles.length === 0) {
+        return;
+    }
+
+    const resetToggles = () => {
+        if (window.innerWidth < 1200) {
+            return;
+        }
+
+        toggles.forEach((toggle) => {
+            const panelId = toggle.dataset.navTarget;
+            const panel = panelId ? document.getElementById(panelId) : null;
+
+            toggle.classList.remove("is-active");
+            toggle.setAttribute("aria-expanded", "false");
+
+            if (panel) {
+                panel.classList.remove("is-open");
+            }
+        });
+    };
+
+    toggles.forEach((toggle) => {
+        const panelId = toggle.dataset.navTarget;
+        const panel = panelId ? document.getElementById(panelId) : null;
+
+        if (!panel) {
+            return;
+        }
+
+        toggle.addEventListener("click", () => {
+            const isOpen = panel.classList.toggle("is-open");
+            toggle.classList.toggle("is-active", isOpen);
+            toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        });
+    });
+
+    window.addEventListener("resize", resetToggles);
+    resetToggles();
+}
 
 function initializeAuthValidation() {
     const authForms = document.querySelectorAll(".auth-form-stack");
