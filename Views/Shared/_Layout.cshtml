@@ -1,3 +1,7 @@
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "Home";
+    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "Index";
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,18 +22,37 @@
     </div>
 
     <header class="public-header">
-        <div class="container-fluid-wide public-nav">
-            <a class="brand-lockup" asp-controller="Home" asp-action="Index">
-                <span class="brand-mark">MC</span>
-                <span class="brand-copy">
-                    <strong>MediCore</strong>
-                    <span>Doctor Appointment System</span>
-                </span>
-            </a>
+        <div class="container-fluid-wide">
+            <div class="public-nav-shell glass-surface">
+                <a class="brand-lockup" asp-controller="Home" asp-action="Index">
+                    <span class="brand-mark">MC</span>
+                    <span class="brand-copy">
+                        <strong>MediCore</strong>
+                        <span>Doctor Appointment System</span>
+                    </span>
+                </a>
 
-            <div class="nav-actions">
-                <a class="nav-link-soft" asp-controller="Auth" asp-action="Register">Register</a>
-                <a class="btn-brand" asp-controller="Auth" asp-action="Login">Login</a>
+                <button class="nav-toggle" type="button" data-nav-toggle data-nav-target="public-nav-panel" aria-expanded="false" aria-controls="public-nav-panel">
+                    <span class="nav-toggle-box" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                    Menu
+                </button>
+
+                <div class="public-nav-panel" id="public-nav-panel" data-nav-panel>
+                    <nav class="public-nav-links" aria-label="Main navigation">
+                        <a class="public-link @(controller == "Home" && action == "Index" ? "active" : "")" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="public-link" asp-controller="Home" asp-action="Index" asp-fragment="workflows">Workflows</a>
+                        <a class="public-link @(controller == "Home" && action == "Privacy" ? "active" : "")" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </nav>
+
+                    <div class="nav-actions">
+                        <a class="nav-link-soft" asp-controller="Auth" asp-action="Register">Register</a>
+                        <a class="btn-brand" asp-controller="Auth" asp-action="Login">Login</a>
+                    </div>
+                </div>
             </div>
         </div>
     </header>

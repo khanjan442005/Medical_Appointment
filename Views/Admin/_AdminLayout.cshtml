@@ -4,6 +4,15 @@
     var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "Dashboard";
     var pageTitle = ViewData["PageTitle"] as string ?? action;
     var pageSubtitle = ViewData["PageSubtitle"] as string ?? "Monitor registrations, approvals, reports, and platform activity from one admin dashboard.";
+    var navItems = new[]
+    {
+        new { Action = "Dashboard", Label = "Overview", Hint = "Platform snapshot", Index = "01" },
+        new { Action = "DoctorVerification", Label = "Doctor Review", Hint = "Handle approvals", Index = "02" },
+        new { Action = "Reports", Label = "Reports", Hint = "Review analytics", Index = "03" },
+        new { Action = "UserManagement", Label = "User Management", Hint = "Control access", Index = "04" },
+        new { Action = "Appointments", Label = "Appointments", Hint = "Inspect bookings", Index = "05" },
+        new { Action = "AddDoctor", Label = "Add Doctor", Hint = "Create practitioner records", Index = "06" }
+    };
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -26,66 +35,86 @@
 
     <div class="panel-layout">
         <aside class="panel-sidebar glass-surface">
-            <a class="brand-lockup" asp-controller="Admin" asp-action="Dashboard">
-                <span class="brand-mark">MC</span>
-                <span class="brand-copy">
-                    <strong>Admin Panel</strong>
-                    <span>System dashboard</span>
-                </span>
-            </a>
+            <div class="panel-sidebar-top">
+                <a class="brand-lockup" asp-controller="Admin" asp-action="Dashboard">
+                    <span class="brand-mark">MC</span>
+                    <span class="brand-copy">
+                        <strong>Admin Panel</strong>
+                        <span>System dashboard</span>
+                    </span>
+                </a>
 
-            <nav class="panel-nav">
-                <a class="panel-link @(action == "Dashboard" ? "active" : "")" asp-controller="Admin" asp-action="Dashboard">
-                    <span>Overview</span>
-                    <span>01</span>
-                </a>
-                <a class="panel-link @(action == "DoctorVerification" ? "active" : "")" asp-controller="Admin" asp-action="DoctorVerification">
-                    <span>Doctor Review</span>
-                    <span>02</span>
-                </a>
-                <a class="panel-link @(action == "Reports" ? "active" : "")" asp-controller="Admin" asp-action="Reports">
-                    <span>Reports</span>
-                    <span>03</span>
-                </a>
-                <a class="panel-link @(action == "UserManagement" ? "active" : "")" asp-controller="Admin" asp-action="UserManagement">
-                    <span>User Management</span>
-                    <span>04</span>
-                </a>
-                <a class="panel-link @(action == "Appointments" ? "active" : "")" asp-controller="Admin" asp-action="Appointments">
-                    <span>Appointments</span>
-                    <span>05</span>
-                </a>
-                <a class="panel-link @(action == "AddDoctor" ? "active" : "")" asp-controller="Admin" asp-action="AddDoctor">
-                    <span>Add Doctor</span>
-                    <span>06</span>
-                </a>
-            </nav>
+                <button class="nav-toggle panel-nav-toggle" type="button" data-nav-toggle data-nav-target="admin-nav-panel" aria-expanded="false" aria-controls="admin-nav-panel">
+                    <span class="nav-toggle-box" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                    Menu
+                </button>
+            </div>
 
-            <section class="panel-status glass-surface tilt-card" data-tilt>
-                <span class="soft-text">System pulse</span>
-                <strong>System review ready</strong>
-                <p class="soft-text mb-0">Approvals, reports, and user activity stay available for quick review.</p>
-            </section>
+            <div class="panel-sidebar-body" id="admin-nav-panel" data-nav-panel>
+                <section class="panel-role-card">
+                    <div class="panel-role-copy">
+                        <span class="panel-role-badge">Admin workspace</span>
+                        <strong>@admin.FullName</strong>
+                        <p class="soft-text mb-0">Approvals, reports, and system control now sit inside one sharper operations menu.</p>
+                    </div>
+                    <span class="avatar-pill avatar-pill-lg">@admin.Initials</span>
+                </section>
+
+                <div class="panel-nav-head">
+                    <span class="soft-text">Navigation grid</span>
+                    <strong>Operations menu</strong>
+                </div>
+
+                <nav class="panel-nav" aria-label="Admin navigation">
+                    @foreach (var item in navItems)
+                    {
+                        <a class="panel-link @(action == item.Action ? "active" : "")" asp-controller="Admin" asp-action="@item.Action">
+                            <span class="panel-link-copy">
+                                <strong>@item.Label</strong>
+                                <small>@item.Hint</small>
+                            </span>
+                            <span class="panel-link-index">@item.Index</span>
+                        </a>
+                    }
+                </nav>
+
+                <section class="panel-status glass-surface tilt-card" data-tilt>
+                    <span class="soft-text">System pulse</span>
+                    <strong>System review ready</strong>
+                    <p class="soft-text mb-0">Approvals, reports, and user activity stay available for quick review.</p>
+                </section>
+            </div>
         </aside>
 
         <div class="panel-main">
             <header class="panel-topbar glass-surface">
-                <div>
+                <div class="panel-heading">
                     <span class="eyebrow">Admin Panel</span>
                     <h1>@pageTitle</h1>
                     <p class="soft-text mb-0">@pageSubtitle</p>
                 </div>
 
-                <div class="d-flex gap-2 flex-wrap">
-                    <a class="btn-surface" asp-controller="Admin" asp-action="Reports">Reports</a>
-                    <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
-                        <button type="submit" class="btn-brand-outline">Log Out</button>
-                    </form>
-                    <div class="panel-user-chip">
-                        <span class="avatar-pill">@admin.Initials</span>
-                        <div class="panel-user-meta">
-                            <strong>@admin.FullName</strong>
-                            <span class="panel-user-role">Administrator</span>
+                <div class="panel-topbar-actions">
+                    <div class="panel-context-line">
+                        <span class="panel-context-pill">New navigation system</span>
+                        <span class="panel-context-pill subtle">Admin dashboard</span>
+                    </div>
+
+                    <div class="panel-action-row">
+                        <a class="btn-surface" asp-controller="Admin" asp-action="Reports">Reports</a>
+                        <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                            <button type="submit" class="btn-brand-outline">Log Out</button>
+                        </form>
+                        <div class="panel-user-chip">
+                            <span class="avatar-pill">@admin.Initials</span>
+                            <div class="panel-user-meta">
+                                <strong>@admin.FullName</strong>
+                                <span class="panel-user-role">Administrator</span>
+                            </div>
                         </div>
                     </div>
                 </div>

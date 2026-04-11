@@ -4,6 +4,15 @@
     var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "Dashboard";
     var pageTitle = ViewData["PageTitle"] as string ?? action;
     var pageSubtitle = ViewData["PageSubtitle"] as string ?? "Manage bookings, doctors, payments, and medical history from one patient dashboard.";
+    var navItems = new[]
+    {
+        new { Action = "Dashboard", Label = "Overview", Hint = "Daily care snapshot", Index = "01" },
+        new { Action = "FindDoctor", Label = "Find Doctors", Hint = "Search specialists", Index = "02" },
+        new { Action = "BookAppointment", Label = "Book Visit", Hint = "Schedule new care", Index = "03" },
+        new { Action = "AppointmentHistory", Label = "History", Hint = "Review previous visits", Index = "04" },
+        new { Action = "Notifications", Label = "Notifications", Hint = "Track alerts and updates", Index = "05" },
+        new { Action = "Profile", Label = "Profile", Hint = "Manage personal details", Index = "06" }
+    };
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -26,66 +35,86 @@
 
     <div class="panel-layout">
         <aside class="panel-sidebar glass-surface">
-            <a class="brand-lockup" asp-controller="Patient" asp-action="Dashboard">
-                <span class="brand-mark">MC</span>
-                <span class="brand-copy">
-                    <strong>Patient Panel</strong>
-                    <span>Care dashboard</span>
-                </span>
-            </a>
+            <div class="panel-sidebar-top">
+                <a class="brand-lockup" asp-controller="Patient" asp-action="Dashboard">
+                    <span class="brand-mark">MC</span>
+                    <span class="brand-copy">
+                        <strong>Patient Panel</strong>
+                        <span>Care dashboard</span>
+                    </span>
+                </a>
 
-            <nav class="panel-nav">
-                <a class="panel-link @(action == "Dashboard" ? "active" : "")" asp-controller="Patient" asp-action="Dashboard">
-                    <span>Overview</span>
-                    <span>01</span>
-                </a>
-                <a class="panel-link @(action == "FindDoctor" ? "active" : "")" asp-controller="Patient" asp-action="FindDoctor">
-                    <span>Find Doctors</span>
-                    <span>02</span>
-                </a>
-                <a class="panel-link @(action == "BookAppointment" ? "active" : "")" asp-controller="Patient" asp-action="BookAppointment">
-                    <span>Book Visit</span>
-                    <span>03</span>
-                </a>
-                <a class="panel-link @(action == "AppointmentHistory" ? "active" : "")" asp-controller="Patient" asp-action="AppointmentHistory">
-                    <span>History</span>
-                    <span>04</span>
-                </a>
-                <a class="panel-link @(action == "Notifications" ? "active" : "")" asp-controller="Patient" asp-action="Notifications">
-                    <span>Notifications</span>
-                    <span>05</span>
-                </a>
-                <a class="panel-link @(action == "Profile" ? "active" : "")" asp-controller="Patient" asp-action="Profile">
-                    <span>Profile</span>
-                    <span>06</span>
-                </a>
-            </nav>
+                <button class="nav-toggle panel-nav-toggle" type="button" data-nav-toggle data-nav-target="patient-nav-panel" aria-expanded="false" aria-controls="patient-nav-panel">
+                    <span class="nav-toggle-box" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                    Menu
+                </button>
+            </div>
 
-            <section class="panel-status glass-surface tilt-card" data-tilt>
-                <span class="soft-text">Health sync</span>
-                <strong>Care activity ready</strong>
-                <p class="soft-text mb-0">Appointments, payments, and notifications stay grouped in one clear view.</p>
-            </section>
+            <div class="panel-sidebar-body" id="patient-nav-panel" data-nav-panel>
+                <section class="panel-role-card">
+                    <div class="panel-role-copy">
+                        <span class="panel-role-badge">Patient workspace</span>
+                        <strong>@patient.FullName</strong>
+                        <p class="soft-text mb-0">Doctors, bookings, and updates now stay inside one cleaner navigation flow.</p>
+                    </div>
+                    <span class="avatar-pill avatar-pill-lg">@patient.Initials</span>
+                </section>
+
+                <div class="panel-nav-head">
+                    <span class="soft-text">Navigation grid</span>
+                    <strong>Care actions</strong>
+                </div>
+
+                <nav class="panel-nav" aria-label="Patient navigation">
+                    @foreach (var item in navItems)
+                    {
+                        <a class="panel-link @(action == item.Action ? "active" : "")" asp-controller="Patient" asp-action="@item.Action">
+                            <span class="panel-link-copy">
+                                <strong>@item.Label</strong>
+                                <small>@item.Hint</small>
+                            </span>
+                            <span class="panel-link-index">@item.Index</span>
+                        </a>
+                    }
+                </nav>
+
+                <section class="panel-status glass-surface tilt-card" data-tilt>
+                    <span class="soft-text">Health sync</span>
+                    <strong>Care activity ready</strong>
+                    <p class="soft-text mb-0">Appointments, payments, and notifications stay grouped in one clear view.</p>
+                </section>
+            </div>
         </aside>
 
         <div class="panel-main">
             <header class="panel-topbar glass-surface">
-                <div>
+                <div class="panel-heading">
                     <span class="eyebrow">Patient Panel</span>
                     <h1>@pageTitle</h1>
                     <p class="soft-text mb-0">@pageSubtitle</p>
                 </div>
 
-                <div class="d-flex gap-2 flex-wrap">
-                    <a class="btn-surface" asp-controller="Patient" asp-action="Notifications">Alerts</a>
-                    <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
-                        <button type="submit" class="btn-brand-outline">Log Out</button>
-                    </form>
-                    <div class="panel-user-chip">
-                        <span class="avatar-pill">@patient.Initials</span>
-                        <div class="panel-user-meta">
-                            <strong>@patient.FullName</strong>
-                            <span class="panel-user-role">Patient account</span>
+                <div class="panel-topbar-actions">
+                    <div class="panel-context-line">
+                        <span class="panel-context-pill">New navigation system</span>
+                        <span class="panel-context-pill subtle">Patient dashboard</span>
+                    </div>
+
+                    <div class="panel-action-row">
+                        <a class="btn-surface" asp-controller="Patient" asp-action="Notifications">Alerts</a>
+                        <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                            <button type="submit" class="btn-brand-outline">Log Out</button>
+                        </form>
+                        <div class="panel-user-chip">
+                            <span class="avatar-pill">@patient.Initials</span>
+                            <div class="panel-user-meta">
+                                <strong>@patient.FullName</strong>
+                                <span class="panel-user-role">Patient account</span>
+                            </div>
                         </div>
                     </div>
                 </div>
