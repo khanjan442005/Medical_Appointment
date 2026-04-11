@@ -6,6 +6,29 @@
     Layout = "~/Views/Admin/_AdminLayout.cshtml";
 }
 
+<section class="stats-grid">
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Patients</span>
+        <strong>@Model.PatientCount.ToString("D2")</strong>
+        <span class="soft-text">Active patient accounts in the platform.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Verified doctors</span>
+        <strong>@Model.VerifiedDoctorCount.ToString("D2")</strong>
+        <span class="soft-text">Approved doctors available for booking.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Pending doctors</span>
+        <strong>@Model.PendingDoctorCount.ToString("D2")</strong>
+        <span class="soft-text">Doctor profiles still waiting for admin action.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Visible results</span>
+        <strong>@Model.Users.Count.ToString("D2")</strong>
+        <span class="soft-text">Rows matched by the current filters.</span>
+    </article>
+</section>
+
 <section class="section-card glass-surface">
     <div class="section-head">
         <div>
@@ -15,6 +38,7 @@
         <div class="d-flex gap-2 flex-wrap">
             <a class="btn-brand" asp-action="AddDoctor">Add doctor</a>
             <a class="btn-brand-outline" asp-action="Appointments">Appointments</a>
+            <a class="btn-brand-outline" asp-action="DoctorVerification">Doctor review</a>
         </div>
     </div>
 
@@ -29,9 +53,9 @@
     }
 
     <form method="get" class="row g-3 align-items-end mb-4">
-        <div class="col-lg-6">
+        <div class="col-lg-5">
             <label class="auth-label">Search</label>
-            <input name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Name, email, or specialization" />
+            <input name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Name, email, specialization, role, or status" />
         </div>
         <div class="col-lg-3">
             <label class="auth-label">Role</label>
@@ -41,8 +65,17 @@
                 <option value="Doctor" selected="@(Model.RoleFilter == "Doctor" ? "selected" : null)">Doctor</option>
             </select>
         </div>
-        <div class="col-lg-3 d-grid">
-            <button type="submit" class="btn-brand">Apply filters</button>
+        <div class="col-lg-2">
+            <label class="auth-label">Status</label>
+            <select name="statusFilter" class="form-select">
+                <option value="All" selected="@(Model.StatusFilter == "All" ? "selected" : null)">All</option>
+                <option value="Active" selected="@(Model.StatusFilter == "Active" ? "selected" : null)">Active</option>
+                <option value="Verified" selected="@(Model.StatusFilter == "Verified" ? "selected" : null)">Verified</option>
+                <option value="Pending" selected="@(Model.StatusFilter == "Pending" ? "selected" : null)">Pending</option>
+            </select>
+        </div>
+        <div class="col-lg-2 d-grid">
+            <button type="submit" class="btn-brand">Apply</button>
         </div>
     </form>
 
@@ -63,7 +96,9 @@
                     @foreach (var user in Model.Users)
                     {
                         <tr>
-                            <td>@user.Name</td>
+                            <td>
+                                <strong>@user.Name</strong>
+                            </td>
                             <td>@user.Role</td>
                             <td><span class="status-tag">@user.Status</span></td>
                             <td>@user.Detail</td>

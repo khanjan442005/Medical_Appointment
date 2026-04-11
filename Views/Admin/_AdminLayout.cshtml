@@ -1,6 +1,7 @@
 @inject IDemoPortalService PortalService
 @{
     var admin = PortalService.GetCurrentAdmin();
+    var metrics = PortalService.GetPortalMetrics();
     var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "Dashboard";
     var pageTitle = ViewData["PageTitle"] as string ?? action;
     var pageSubtitle = ViewData["PageSubtitle"] as string ?? "Monitor registrations, approvals, reports, and platform activity from one admin dashboard.";
@@ -84,8 +85,8 @@
 
                 <section class="panel-status glass-surface tilt-card" data-tilt>
                     <span class="soft-text">System pulse</span>
-                    <strong>System review ready</strong>
-                    <p class="soft-text mb-0">Approvals, reports, and user activity stay available for quick review.</p>
+                    <strong>@metrics.PendingDoctorVerifications.ToString("D2") requests waiting for review</strong>
+                    <p class="soft-text mb-0">@metrics.WeeklyAppointments.ToString("D2") weekly appointments and @metrics.PendingPayments.ToString("D2") payment follow-ups are active right now.</p>
                 </section>
             </div>
         </aside>
@@ -100,8 +101,8 @@
 
                 <div class="panel-topbar-actions">
                     <div class="panel-context-line">
-                        <span class="panel-context-pill">New navigation system</span>
-                        <span class="panel-context-pill subtle">Admin dashboard</span>
+                        <span class="panel-context-pill">@metrics.PendingDoctorVerifications.ToString("D2") pending reviews</span>
+                        <span class="panel-context-pill subtle">@metrics.RevenueLabel tracked revenue</span>
                     </div>
 
                     <div class="panel-action-row">

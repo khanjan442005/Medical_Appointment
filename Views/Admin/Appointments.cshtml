@@ -6,14 +6,67 @@
     Layout = "~/Views/Admin/_AdminLayout.cshtml";
 }
 
+<section class="stats-grid">
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Visible appointments</span>
+        <strong>@Model.TotalAppointmentsCount.ToString("D2")</strong>
+        <span class="soft-text">Rows matched by the current search and filters.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Confirmed</span>
+        <strong>@Model.ConfirmedAppointmentsCount.ToString("D2")</strong>
+        <span class="soft-text">Appointments already confirmed after payment.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Completed</span>
+        <strong>@Model.CompletedAppointmentsCount.ToString("D2")</strong>
+        <span class="soft-text">Visits already completed in the current data set.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Filtered revenue</span>
+        <strong>@Model.RevenueLabel</strong>
+        <span class="soft-text">@Model.PendingPaymentsCount.ToString("D2") payment follow-ups still open.</span>
+    </article>
+</section>
+
 <section class="section-card glass-surface">
     <div class="section-head">
         <div>
             <span class="eyebrow">Bookings</span>
             <h3>Platform appointments</h3>
         </div>
-        <a class="btn-brand-outline" asp-action="UserManagement">Back to users</a>
+        <div class="d-flex gap-2 flex-wrap">
+            <a class="btn-brand-outline" asp-action="UserManagement">Users</a>
+            <a class="btn-brand-outline" asp-action="Reports">Reports</a>
+        </div>
     </div>
+
+    <form method="get" class="row g-3 align-items-end mb-4">
+        <div class="col-lg-5">
+            <label class="auth-label">Search</label>
+            <input name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Patient, doctor, specialization, date, payment" />
+        </div>
+        <div class="col-lg-3">
+            <label class="auth-label">Status</label>
+            <select name="statusFilter" class="form-select">
+                <option value="All" selected="@(Model.StatusFilter == "All" ? "selected" : null)">All statuses</option>
+                <option value="Payment Pending" selected="@(Model.StatusFilter == "Payment Pending" ? "selected" : null)">Payment Pending</option>
+                <option value="Confirmed" selected="@(Model.StatusFilter == "Confirmed" ? "selected" : null)">Confirmed</option>
+                <option value="Completed" selected="@(Model.StatusFilter == "Completed" ? "selected" : null)">Completed</option>
+            </select>
+        </div>
+        <div class="col-lg-2">
+            <label class="auth-label">Payment</label>
+            <select name="paymentFilter" class="form-select">
+                <option value="All" selected="@(Model.PaymentFilter == "All" ? "selected" : null)">All</option>
+                <option value="Paid" selected="@(Model.PaymentFilter == "Paid" ? "selected" : null)">Paid</option>
+                <option value="Pending" selected="@(Model.PaymentFilter == "Pending" ? "selected" : null)">Pending</option>
+            </select>
+        </div>
+        <div class="col-lg-2 d-grid">
+            <button type="submit" class="btn-brand">Apply</button>
+        </div>
+    </form>
 
     <div class="table-theme glass-surface">
         <table class="table align-middle">
@@ -22,10 +75,10 @@
                     <th>Patient</th>
                     <th>Doctor</th>
                     <th>Date</th>
-                    <th>Time</th>
                     <th>Status</th>
                     <th>Payment</th>
                     <th>Total</th>
+                    <th>Created</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,18 +92,24 @@
                                 <strong>@appointment.DoctorName</strong>
                                 <div class="soft-text">@appointment.DoctorSpecialization</div>
                             </td>
-                            <td>@appointment.DateLabel</td>
-                            <td>@appointment.TimeSlot</td>
+                            <td>
+                                <strong>@appointment.DateLabel</strong>
+                                <div class="soft-text">@appointment.TimeSlot</div>
+                            </td>
                             <td><span class="status-tag">@appointment.Status</span></td>
-                            <td>@appointment.PaymentMethod</td>
+                            <td>
+                                <strong>@appointment.PaymentStatus</strong>
+                                <div class="soft-text">@appointment.PaymentMethod</div>
+                            </td>
                             <td>@appointment.FeeLabel</td>
+                            <td>@appointment.CreatedAtLabel</td>
                         </tr>
                     }
                 }
                 else
                 {
                     <tr>
-                        <td colspan="7" class="text-center py-4">No appointments are available yet.</td>
+                        <td colspan="7" class="text-center py-4">No appointments matched the current filters.</td>
                     </tr>
                 }
             </tbody>

@@ -29,18 +29,134 @@
     </article>
 </section>
 
-<section class="section-card glass-surface">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Analytics</span>
-            <h3>Report visualization</h3>
+<section class="dual-grid">
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Appointments</span>
+                <h3>Status breakdown</h3>
+            </div>
         </div>
-    </div>
 
-    <div class="chart-placeholder">
-        <div class="text-center">
-            <strong>Live report feed ready</strong>
-            <p class="soft-text mb-0">Doctor approvals, patient bookings, and payment revenue all update the same reporting layer.</p>
+        <div class="summary-list">
+            @if (Model.AppointmentStatusBreakdown.Any())
+            {
+                @foreach (var item in Model.AppointmentStatusBreakdown)
+                {
+                    <div class="summary-row">
+                        <span>
+                            <strong>@item.Label</strong>
+                            <small class="d-block">@item.Detail</small>
+                        </span>
+                        <strong>@item.ValueLabel</strong>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="summary-row">
+                    <span>No appointment data available.</span>
+                    <strong>00</strong>
+                </div>
+            }
         </div>
-    </div>
+    </article>
+
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Doctor requests</span>
+                <h3>Approval pipeline</h3>
+            </div>
+        </div>
+
+        <div class="summary-list">
+            @if (Model.RequestStatusBreakdown.Any())
+            {
+                @foreach (var item in Model.RequestStatusBreakdown)
+                {
+                    <div class="summary-row">
+                        <span>
+                            <strong>@item.Label</strong>
+                            <small class="d-block">@item.Detail</small>
+                        </span>
+                        <strong>@item.ValueLabel</strong>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="summary-row">
+                    <span>No doctor request data available.</span>
+                    <strong>00</strong>
+                </div>
+            }
+        </div>
+    </article>
+</section>
+
+<section class="dual-grid">
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Payments</span>
+                <h3>Payment method mix</h3>
+            </div>
+        </div>
+
+        <div class="summary-list">
+            @if (Model.PaymentMethodBreakdown.Any())
+            {
+                @foreach (var item in Model.PaymentMethodBreakdown)
+                {
+                    <div class="summary-row">
+                        <span>
+                            <strong>@item.Label</strong>
+                            <small class="d-block">@item.Detail</small>
+                        </span>
+                        <strong>@item.ValueLabel</strong>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="summary-row">
+                    <span>No completed payments found yet.</span>
+                    <strong>00</strong>
+                </div>
+            }
+        </div>
+    </article>
+
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Doctors</span>
+                <h3>Top specializations</h3>
+            </div>
+        </div>
+
+        <div class="summary-list">
+            @if (Model.SpecializationBreakdown.Any())
+            {
+                @foreach (var item in Model.SpecializationBreakdown)
+                {
+                    <div class="summary-row">
+                        <span>
+                            <strong>@item.Label</strong>
+                            <small class="d-block">@item.Detail</small>
+                        </span>
+                        <strong>@item.ValueLabel</strong>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="summary-row">
+                    <span>No specialization data available.</span>
+                    <strong>00</strong>
+                </div>
+            }
+        </div>
+    </article>
 </section>

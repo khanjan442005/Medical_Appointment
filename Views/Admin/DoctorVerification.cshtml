@@ -6,11 +6,34 @@
     Layout = "~/Views/Admin/_AdminLayout.cshtml";
 }
 
+<section class="stats-grid">
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Pending approvals</span>
+        <strong>@Model.PendingRequestsCount.ToString("D2")</strong>
+        <span class="soft-text">Requests that still need an admin decision.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Approved requests</span>
+        <strong>@Model.ApprovedRequestsCount.ToString("D2")</strong>
+        <span class="soft-text">Doctor signups that already passed review.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Rejected requests</span>
+        <strong>@Model.RejectedRequestsCount.ToString("D2")</strong>
+        <span class="soft-text">Applications that were declined by the admin team.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Verified doctors</span>
+        <strong>@Model.VerifiedDoctorsCount.ToString("D2")</strong>
+        <span class="soft-text">Live providers currently visible to patients.</span>
+    </article>
+</section>
+
 <section class="section-card glass-surface">
     <div class="section-head">
         <div>
             <span class="eyebrow">Verification queue</span>
-            <h3>Pending doctor approvals</h3>
+            <h3>Doctor approval workspace</h3>
         </div>
     </div>
 
@@ -19,50 +42,81 @@
         <div class="alert alert-success mb-4">@TempData["Success"]</div>
     }
 
-    <div class="summary-list mb-4">
-        <div class="summary-row">
-            <span>Verified doctors</span>
-            <strong>@Model.VerifiedDoctorsCount.ToString("D2")</strong>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger mb-4">@TempData["Error"]</div>
+    }
+
+    <form method="get" class="row g-3 align-items-end mb-4">
+        <div class="col-lg-6">
+            <label class="auth-label">Search</label>
+            <input name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Name, email, specialization, hospital, city" />
         </div>
-        <div class="summary-row">
-            <span>Pending approvals</span>
-            <strong>@Model.PendingRequests.Count.ToString("D2")</strong>
+        <div class="col-lg-3">
+            <label class="auth-label">Status</label>
+            <select name="statusFilter" class="form-select">
+                <option value="Pending" selected="@(Model.StatusFilter == "Pending" ? "selected" : null)">Pending</option>
+                <option value="Approved" selected="@(Model.StatusFilter == "Approved" ? "selected" : null)">Approved</option>
+                <option value="Rejected" selected="@(Model.StatusFilter == "Rejected" ? "selected" : null)">Rejected</option>
+                <option value="All" selected="@(Model.StatusFilter == "All" ? "selected" : null)">All statuses</option>
+            </select>
         </div>
-    </div>
+        <div class="col-lg-3 d-grid">
+            <button type="submit" class="btn-brand">Apply filters</button>
+        </div>
+    </form>
 
     <div class="table-theme glass-surface">
         <table class="table align-middle">
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Doctor</th>
                     <th>Specialization</th>
-                    <th>License</th>
+                    <th>Location</th>
+                    <th>Requested</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                @if (Model.PendingRequests.Any())
+                @if (Model.Requests.Any())
                 {
-                    @foreach (var request in Model.PendingRequests)
+                    @foreach (var request in Model.Requests)
                     {
                         <tr>
                             <td>
                                 <strong>@request.FullName</strong>
                                 <div class="soft-text">@request.Email</div>
+                                <div class="soft-text">License: @request.LicenseNumber</div>
                             </td>
-                            <td>@request.Specialization</td>
-                            <td>@request.LicenseNumber</td>
+                            <td>
+                                <strong>@request.Specialization</strong>
+                                <div class="soft-text">@request.ExperienceYears years experience</div>
+                            </td>
+                            <td>
+                                <strong>@request.City</strong>
+                                <div class="soft-text">@request.HospitalName</div>
+                            </td>
+                            <td>@request.RequestedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
                             <td><span class="status-tag">@request.Status</span></td>
-                            <td class="d-flex gap-2">
-                                <form asp-action="ApproveDoctor" method="post">
-                                    <input type="hidden" name="requestId" value="@request.Id" />
-                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
-                                </form>
-                                <form asp-action="RejectDoctor" method="post">
-                                    <input type="hidden" name="requestId" value="@request.Id" />
-                                    <button type="submit" class="btn btn-brand-outline btn-sm">Reject</button>
-                                </form>
+                            <td>
+                                @if (request.Status == "Pending")
+                                {
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <form asp-action="ApproveDoctor" method="post" class="d-inline">
+                                            <input type="hidden" name="requestId" value="@request.Id" />
+                                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                        </form>
+                                        <form asp-action="RejectDoctor" method="post" class="d-inline">
+                                            <input type="hidden" name="requestId" value="@request.Id" />
+                                            <button type="submit" class="btn btn-brand-outline btn-sm">Reject</button>
+                                        </form>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="soft-text">Already reviewed</span>
+                                }
                             </td>
                         </tr>
                     }
@@ -70,7 +124,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="5" class="text-center py-4">No pending doctor approvals right now.</td>
+                        <td colspan="6" class="text-center py-4">No doctor requests matched the selected filters.</td>
                     </tr>
                 }
             </tbody>

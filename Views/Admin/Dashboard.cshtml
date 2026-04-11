@@ -10,7 +10,7 @@
     <span class="eyebrow">Admin summary</span>
     <h2>System overview at a glance.</h2>
     <p class="soft-text mb-0">
-        Doctor approvals, patient bookings, and payment updates now feed the same admin layer.
+        Doctor approvals, patient bookings, revenue, and payment follow-ups are now grouped into one stronger operations dashboard.
     </p>
 </section>
 
@@ -71,6 +71,14 @@
                 </div>
                 <span class="status-tag">Live</span>
             </article>
+            <article class="timeline-item">
+                <div class="timeline-slot">@Model.Metrics.NewRegistrations.ToString("D2")</div>
+                <div class="timeline-copy">
+                    <strong>Recent registrations</strong>
+                    <span>Patients and doctors added during the current activity window.</span>
+                </div>
+                <span class="status-tag">Growth</span>
+            </article>
         </div>
     </article>
 
@@ -86,7 +94,99 @@
             <a class="btn-brand" asp-controller="Admin" asp-action="DoctorVerification">Review doctors</a>
             <a class="btn-brand-outline" asp-controller="Admin" asp-action="UserManagement">Manage users</a>
             <a class="btn-brand-outline" asp-controller="Admin" asp-action="Appointments">View appointments</a>
+            <a class="btn-brand-outline" asp-controller="Admin" asp-action="Reports">Open reports</a>
             <a class="btn-brand-outline" asp-controller="Admin" asp-action="AddDoctor">Add doctor</a>
+        </div>
+    </article>
+</section>
+
+<section class="dual-grid">
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Recent requests</span>
+                <h3>Latest doctor applications</h3>
+            </div>
+            <a class="btn-brand-outline" asp-action="DoctorVerification">Open queue</a>
+        </div>
+
+        <div class="timeline-list">
+            @if (Model.RecentDoctorRequests.Any())
+            {
+                @foreach (var request in Model.RecentDoctorRequests)
+                {
+                    <article class="timeline-item">
+                        <div class="timeline-slot">@request.RequestedAt.ToLocalTime().ToString("dd MMM")</div>
+                        <div class="timeline-copy">
+                            <strong>@request.FullName</strong>
+                            <span>@request.Specialization • @request.City</span>
+                        </div>
+                        <span class="status-tag">@request.Status</span>
+                    </article>
+                }
+            }
+            else
+            {
+                <article class="timeline-item">
+                    <div class="timeline-copy">
+                        <strong>No doctor requests found.</strong>
+                        <span>New verification requests will appear here automatically.</span>
+                    </div>
+                    <span class="status-tag">Clear</span>
+                </article>
+            }
+        </div>
+    </article>
+
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Recent bookings</span>
+                <h3>Latest appointment activity</h3>
+            </div>
+            <a class="btn-brand-outline" asp-action="Appointments">Full list</a>
+        </div>
+
+        <div class="table-theme glass-surface">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.RecentAppointments.Any())
+                    {
+                        @foreach (var appointment in Model.RecentAppointments)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@appointment.PatientName</strong>
+                                    <div class="soft-text">@appointment.DateLabel • @appointment.TimeSlot</div>
+                                </td>
+                                <td>
+                                    <strong>@appointment.DoctorName</strong>
+                                    <div class="soft-text">@appointment.DoctorSpecialization</div>
+                                </td>
+                                <td><span class="status-tag">@appointment.Status</span></td>
+                                <td>
+                                    <strong>@appointment.PaymentStatus</strong>
+                                    <div class="soft-text">@appointment.PaymentMethod</div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-4">No appointment activity is available yet.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </article>
 </section>

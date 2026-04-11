@@ -217,12 +217,19 @@ public sealed class DoctorOwnProfileViewModel
 public sealed class AdminDashboardViewModel
 {
     public PortalMetrics Metrics { get; set; } = new();
+    public List<DemoDoctorRequest> RecentDoctorRequests { get; set; } = [];
+    public List<AdminAppointmentRowViewModel> RecentAppointments { get; set; } = [];
 }
 
 public sealed class DoctorVerificationViewModel
 {
-    public List<DemoDoctorRequest> PendingRequests { get; set; } = [];
+    public List<DemoDoctorRequest> Requests { get; set; } = [];
     public int VerifiedDoctorsCount { get; set; }
+    public int PendingRequestsCount { get; set; }
+    public int ApprovedRequestsCount { get; set; }
+    public int RejectedRequestsCount { get; set; }
+    public string SearchTerm { get; set; } = string.Empty;
+    public string StatusFilter { get; set; } = "Pending";
 }
 
 public sealed class UserManagementViewModel
@@ -230,11 +237,19 @@ public sealed class UserManagementViewModel
     public List<UserRowViewModel> Users { get; set; } = [];
     public string SearchTerm { get; set; } = string.Empty;
     public string RoleFilter { get; set; } = "All";
+    public string StatusFilter { get; set; } = "All";
+    public int PatientCount { get; set; }
+    public int VerifiedDoctorCount { get; set; }
+    public int PendingDoctorCount { get; set; }
 }
 
 public sealed class ReportsViewModel
 {
     public PortalMetrics Metrics { get; set; } = new();
+    public List<ReportBreakdownItemViewModel> AppointmentStatusBreakdown { get; set; } = [];
+    public List<ReportBreakdownItemViewModel> RequestStatusBreakdown { get; set; } = [];
+    public List<ReportBreakdownItemViewModel> PaymentMethodBreakdown { get; set; } = [];
+    public List<ReportBreakdownItemViewModel> SpecializationBreakdown { get; set; } = [];
 }
 
 public sealed class AdminAppointmentRowViewModel
@@ -247,10 +262,28 @@ public sealed class AdminAppointmentRowViewModel
     public string TimeSlot { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
     public string PaymentMethod { get; set; } = string.Empty;
+    public string PaymentStatus { get; set; } = string.Empty;
+    public decimal TotalAmount { get; set; }
     public string FeeLabel { get; set; } = string.Empty;
+    public string CreatedAtLabel { get; set; } = string.Empty;
 }
 
 public sealed class AdminAppointmentsViewModel
 {
     public List<AdminAppointmentRowViewModel> Appointments { get; set; } = [];
+    public string SearchTerm { get; set; } = string.Empty;
+    public string StatusFilter { get; set; } = "All";
+    public string PaymentFilter { get; set; } = "All";
+    public int TotalAppointmentsCount { get; set; }
+    public int ConfirmedAppointmentsCount { get; set; }
+    public int CompletedAppointmentsCount { get; set; }
+    public int PendingPaymentsCount { get; set; }
+    public string RevenueLabel { get; set; } = string.Empty;
+}
+
+public sealed class ReportBreakdownItemViewModel
+{
+    public string Label { get; set; } = string.Empty;
+    public string ValueLabel { get; set; } = string.Empty;
+    public string Detail { get; set; } = string.Empty;
 }
