@@ -9,12 +9,18 @@
                 <span class="eyebrow">Smart healthcare access</span>
                 <h1 class="hero-title">Professional appointment management for patients, doctors, and administrators.</h1>
                 <p class="hero-text">
-                    MediCore provides a clean healthcare experience with better structure, subtle depth, and modern visuals that still feel practical and professional.
+                    MediCore brings booking, approvals, doctor schedules, and daily operations into one practical healthcare workspace. The experience is designed to feel modern, calm, and organized instead of empty or confusing.
                 </p>
 
                 <div class="hero-actions">
                     <a class="btn-brand" asp-controller="Auth" asp-action="Login">Login</a>
                     <a class="btn-brand-outline" asp-controller="Auth" asp-action="Register">Register</a>
+                </div>
+
+                <div class="hero-badges">
+                    <span class="status-tag">Patient booking</span>
+                    <span class="status-tag">Doctor scheduling</span>
+                    <span class="status-tag">Admin approvals</span>
                 </div>
 
                 <div class="hero-metrics">
@@ -66,19 +72,176 @@
             </div>
         </div>
 
-        <div class="feature-grid" id="workflows">
-            <article class="feature-card glass-surface tilt-card" data-tilt>
-                <h3>Patient-friendly flow</h3>
-                <p class="mb-0">Appointments, profiles, and notifications are easier to access and understand.</p>
+        <section class="home-section">
+            <div class="section-head">
+                <div>
+                    <span class="eyebrow">Live overview</span>
+                    <h3 class="home-section-title">One platform with all essential healthcare actions in view.</h3>
+                </div>
+                <p class="home-section-copy mb-0">The landing page now gives a fuller picture of what the system handles every day.</p>
+            </div>
+
+            <div class="stats-grid">
+                <article class="stat-card glass-surface tilt-card" data-tilt>
+                    <span class="soft-text">Daily bookings</span>
+                    <strong>312</strong>
+                    <span>Patients can request and confirm appointments from one place.</span>
+                </article>
+                <article class="stat-card glass-surface tilt-card" data-tilt>
+                    <span class="soft-text">Active specialists</span>
+                    <strong>128</strong>
+                    <span>Doctors manage schedules, profiles, and visit queues clearly.</span>
+                </article>
+                <article class="stat-card glass-surface tilt-card" data-tilt>
+                    <span class="soft-text">Approval queue</span>
+                    <strong>24</strong>
+                    <span>Admin review remains visible without slowing operational flow.</span>
+                </article>
+                <article class="stat-card glass-surface tilt-card" data-tilt>
+                    <span class="soft-text">Response window</span>
+                    <strong>3 min</strong>
+                    <span>Fast access and clear actions reduce friction across the portal.</span>
+                </article>
+            </div>
+        </section>
+
+        <section class="home-section" id="workflows">
+            <div class="section-head">
+                <div>
+                    <span class="eyebrow">Workflows</span>
+                    <h3 class="home-section-title">Dedicated flows for patient care, clinical work, and administration.</h3>
+                </div>
+                <p class="home-section-copy mb-0">The system separates responsibilities while keeping the overall experience consistent.</p>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature-card glass-surface tilt-card" data-tilt>
+                    <h3>Patient-friendly flow</h3>
+                    <p class="mb-0">Appointments, profiles, payments, and notifications stay easier to access and understand.</p>
+                </article>
+                <article class="feature-card glass-surface tilt-card" data-tilt>
+                    <h3>Doctor workflow</h3>
+                    <p class="mb-0">Schedule, availability, earnings, and daily visits are grouped with cleaner spacing and hierarchy.</p>
+                </article>
+                <article class="feature-card glass-surface tilt-card" data-tilt>
+                    <h3>Admin management</h3>
+                    <p class="mb-0">Reports, verification, and user management are structured for day-to-day operational use.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="home-section" id="about">
+            <div class="dual-grid">
+                <article class="section-card glass-surface home-about-card">
+                    <span class="eyebrow">About MediCore</span>
+                    <h2 class="home-block-title">A more complete doctor appointment system for everyday healthcare operations.</h2>
+                    <p>
+                        MediCore is built to bring the patient journey, doctor workload, and admin oversight into one balanced system. Instead of splitting work across disconnected screens, it keeps booking, profile management, availability, approvals, and alerts aligned.
+                    </p>
+                    <p class="mb-0">
+                        The design direction focuses on clarity first: clean sections, visible actions, responsive layouts, and a calmer visual style that still feels professional for hospitals, clinics, and appointment teams.
+                    </p>
+
+                    <div class="about-list">
+                        <article class="about-item">
+                            <strong>For patients</strong>
+                            <span>Find doctors, book visits, review history, and manage notifications.</span>
+                        </article>
+                        <article class="about-item">
+                            <strong>For doctors</strong>
+                            <span>Track appointments, set availability, update profile, and review earnings.</span>
+                        </article>
+                        <article class="about-item">
+                            <strong>For admins</strong>
+                            <span>Approve doctors, monitor reports, and manage the overall platform.</span>
+                        </article>
+                    </div>
+                </article>
+
+                <div class="about-cluster">
+                    <article class="section-card glass-surface">
+                        <span class="soft-text">Platform focus</span>
+                        <h3 class="mt-2">Why this home page feels fuller now</h3>
+                        <p class="mb-0">More sections give visitors immediate context about the system, not just one hero block. It now explains the product, the workflow, and the practical value.</p>
+                    </article>
+
+                    <article class="section-card glass-surface">
+                        <div class="section-head">
+                            <div>
+                                <span class="soft-text">System journey</span>
+                                <h3 class="mb-0">How the platform flows</h3>
+                            </div>
+                        </div>
+
+                        <div class="timeline-list">
+                            <article class="timeline-item">
+                                <span class="timeline-slot">01</span>
+                                <div class="timeline-copy">
+                                    <strong>Patient sends a request</strong>
+                                    <p class="mb-0">Appointments start with a simple booking flow and visible doctor details.</p>
+                                </div>
+                                <span class="status-tag">Booking</span>
+                            </article>
+                            <article class="timeline-item">
+                                <span class="timeline-slot">02</span>
+                                <div class="timeline-copy">
+                                    <strong>Doctor manages schedule</strong>
+                                    <p class="mb-0">Availability and appointment queues remain organized from one dashboard.</p>
+                                </div>
+                                <span class="status-tag">Schedule</span>
+                            </article>
+                            <article class="timeline-item">
+                                <span class="timeline-slot">03</span>
+                                <div class="timeline-copy">
+                                    <strong>Admin monitors the system</strong>
+                                    <p class="mb-0">Verification, reports, and operations stay available for fast action.</p>
+                                </div>
+                                <span class="status-tag">Control</span>
+                            </article>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="home-section">
+            <div class="section-head">
+                <div>
+                    <span class="eyebrow">Role highlights</span>
+                    <h3 class="home-section-title">Separate workspaces designed for each type of user.</h3>
+                </div>
+                <p class="home-section-copy mb-0">Each role keeps its own navigation, tasks, and decision points without losing consistency.</p>
+            </div>
+
+            <div class="role-option-grid home-role-grid">
+                <article class="role-option glass-surface tilt-card" data-tilt>
+                    <strong>Patient area</strong>
+                    <p class="mb-0">Browse doctors, manage bookings, confirm payments, and keep appointment history close.</p>
+                </article>
+                <article class="role-option glass-surface tilt-card" data-tilt>
+                    <strong>Doctor area</strong>
+                    <p class="mb-0">Handle clinical schedule, working slots, visit pipeline, and performance insights.</p>
+                </article>
+                <article class="role-option glass-surface tilt-card" data-tilt>
+                    <strong>Admin area</strong>
+                    <p class="mb-0">Supervise registrations, reports, doctor approvals, and overall platform activity.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="home-section">
+            <article class="home-cta glass-surface">
+                <div>
+                    <span class="eyebrow">Ready to enter</span>
+                    <h2 class="home-block-title">Access the dashboard and continue with your healthcare workflow.</h2>
+                    <p class="mb-0">Use the secure login to move into the patient, doctor, or admin experience.</p>
+                </div>
+
+                <div class="hero-actions home-cta-actions">
+                    <a class="btn-brand" asp-controller="Auth" asp-action="Login">Login</a>
+                    <a class="btn-brand-outline" asp-controller="Auth" asp-action="Register">Create account</a>
+                </div>
             </article>
-            <article class="feature-card glass-surface tilt-card" data-tilt>
-                <h3>Doctor workflow</h3>
-                <p class="mb-0">Schedule, availability, earnings, and daily visits are grouped with cleaner spacing and hierarchy.</p>
-            </article>
-            <article class="feature-card glass-surface tilt-card" data-tilt>
-                <h3>Admin management</h3>
-                <p class="mb-0">Reports, verification, and user management are structured for day-to-day operational use.</p>
-            </article>
-        </div>
+        </section>
     </div>
 </section>
