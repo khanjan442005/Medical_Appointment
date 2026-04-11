@@ -1,0 +1,104 @@
+@inject IDemoPortalService PortalService
+@{
+    var admin = PortalService.GetCurrentAdmin();
+    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "Dashboard";
+    var pageTitle = ViewData["PageTitle"] as string ?? action;
+    var pageSubtitle = ViewData["PageSubtitle"] as string ?? "Monitor registrations, approvals, reports, and platform activity from one admin dashboard.";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - MediCore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="panel-shell panel-admin">
+    <div class="ambient-layer">
+        <span class="ambient-orb orb-a" data-orbit></span>
+        <span class="ambient-orb orb-b" data-orbit></span>
+        <span class="ambient-orb orb-c" data-orbit></span>
+    </div>
+
+    <div class="panel-layout">
+        <aside class="panel-sidebar glass-surface">
+            <a class="brand-lockup" asp-controller="Admin" asp-action="Dashboard">
+                <span class="brand-mark">MC</span>
+                <span class="brand-copy">
+                    <strong>Admin Panel</strong>
+                    <span>System dashboard</span>
+                </span>
+            </a>
+
+            <nav class="panel-nav">
+                <a class="panel-link @(action == "Dashboard" ? "active" : "")" asp-controller="Admin" asp-action="Dashboard">
+                    <span>Overview</span>
+                    <span>01</span>
+                </a>
+                <a class="panel-link @(action == "DoctorVerification" ? "active" : "")" asp-controller="Admin" asp-action="DoctorVerification">
+                    <span>Doctor Review</span>
+                    <span>02</span>
+                </a>
+                <a class="panel-link @(action == "Reports" ? "active" : "")" asp-controller="Admin" asp-action="Reports">
+                    <span>Reports</span>
+                    <span>03</span>
+                </a>
+                <a class="panel-link @(action == "UserManagement" ? "active" : "")" asp-controller="Admin" asp-action="UserManagement">
+                    <span>User Management</span>
+                    <span>04</span>
+                </a>
+                <a class="panel-link @(action == "Appointments" ? "active" : "")" asp-controller="Admin" asp-action="Appointments">
+                    <span>Appointments</span>
+                    <span>05</span>
+                </a>
+                <a class="panel-link @(action == "AddDoctor" ? "active" : "")" asp-controller="Admin" asp-action="AddDoctor">
+                    <span>Add Doctor</span>
+                    <span>06</span>
+                </a>
+            </nav>
+
+            <section class="panel-status glass-surface tilt-card" data-tilt>
+                <span class="soft-text">System pulse</span>
+                <strong>System review ready</strong>
+                <p class="soft-text mb-0">Approvals, reports, and user activity stay available for quick review.</p>
+            </section>
+        </aside>
+
+        <div class="panel-main">
+            <header class="panel-topbar glass-surface">
+                <div>
+                    <span class="eyebrow">Admin Panel</span>
+                    <h1>@pageTitle</h1>
+                    <p class="soft-text mb-0">@pageSubtitle</p>
+                </div>
+
+                <div class="d-flex gap-2 flex-wrap">
+                    <a class="btn-surface" asp-controller="Admin" asp-action="Reports">Reports</a>
+                    <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="btn-brand-outline">Log Out</button>
+                    </form>
+                    <div class="panel-user-chip">
+                        <span class="avatar-pill">@admin.Initials</span>
+                        <div class="panel-user-meta">
+                            <strong>@admin.FullName</strong>
+                            <span class="panel-user-role">Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="panel-page">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("PageScripts", required: false)
+</body>
+</html>

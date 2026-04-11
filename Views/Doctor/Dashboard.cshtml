@@ -1,0 +1,89 @@
+@model DoctorDashboardViewModel
+@{
+    ViewData["Title"] = "Doctor Dashboard";
+    ViewData["PageTitle"] = "Doctor Overview";
+    ViewData["PageSubtitle"] = "Monitor live bookings, patient volume, pending actions, and earnings from one doctor dashboard.";
+    Layout = "~/Views/Doctor/_DoctorLayout.cshtml";
+}
+
+<section class="panel-hero glass-surface tilt-card" data-tilt>
+    <span class="eyebrow">Doctor summary</span>
+    <h2>Welcome back, @Model.Doctor.FullName.</h2>
+    <p class="soft-text mb-0">
+        Patient bookings and payment confirmations now arrive directly into your schedule queue.
+    </p>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Today's appointments</span>
+        <strong>@Model.TodaysAppointmentsCount.ToString("D2")</strong>
+        <span class="soft-text">Schedule count for the current day.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Total patients</span>
+        <strong>@Model.TotalPatientsCount.ToString("D2")</strong>
+        <span class="soft-text">Distinct patients linked to this doctor.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Pending actions</span>
+        <strong>@Model.PendingActionsCount.ToString("D2")</strong>
+        <span class="soft-text">Bookings waiting for patient payment.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Monthly earnings</span>
+        <strong>@Model.MonthlyEarningsLabel</strong>
+        <span class="soft-text">Paid consultations in the current month.</span>
+    </article>
+</section>
+
+<section class="dual-grid">
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Appointment queue</span>
+                <h3>Upcoming appointments</h3>
+            </div>
+            <a class="btn-surface" asp-controller="Doctor" asp-action="Appointments">Full schedule</a>
+        </div>
+
+        <div class="table-theme glass-surface">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var appointment in Model.UpcomingAppointments)
+                    {
+                        <tr>
+                            <td>@appointment.PatientName</td>
+                            <td>@appointment.DateLabel</td>
+                            <td>@appointment.TimeSlot</td>
+                            <td><span class="status-tag">@appointment.Status</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Actions</span>
+                <h3>Quick actions</h3>
+            </div>
+        </div>
+
+        <div class="d-grid gap-3">
+            <a class="btn-brand" asp-controller="Doctor" asp-action="Appointments">Review appointments</a>
+            <a class="btn-brand-outline" asp-controller="Doctor" asp-action="Availability">Update availability</a>
+            <a class="btn-brand-outline" asp-controller="Doctor" asp-action="Earnings">Review earnings</a>
+        </div>
+    </article>
+</section>

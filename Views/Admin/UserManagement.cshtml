@@ -1,0 +1,95 @@
+@model UserManagementViewModel
+@{
+    ViewData["Title"] = "User Management";
+    ViewData["PageTitle"] = "User Management";
+    ViewData["PageSubtitle"] = "Review patients and doctors from the same live data source used by the role dashboards.";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+<section class="section-card glass-surface">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Accounts</span>
+            <h3>System users</h3>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a class="btn-brand" asp-action="AddDoctor">Add doctor</a>
+            <a class="btn-brand-outline" asp-action="Appointments">Appointments</a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success mb-4">@TempData["Success"]</div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger mb-4">@TempData["Error"]</div>
+    }
+
+    <form method="get" class="row g-3 align-items-end mb-4">
+        <div class="col-lg-6">
+            <label class="auth-label">Search</label>
+            <input name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Name, email, or specialization" />
+        </div>
+        <div class="col-lg-3">
+            <label class="auth-label">Role</label>
+            <select name="roleFilter" class="form-select">
+                <option value="All" selected="@(Model.RoleFilter == "All" ? "selected" : null)">All roles</option>
+                <option value="Patient" selected="@(Model.RoleFilter == "Patient" ? "selected" : null)">Patient</option>
+                <option value="Doctor" selected="@(Model.RoleFilter == "Doctor" ? "selected" : null)">Doctor</option>
+            </select>
+        </div>
+        <div class="col-lg-3 d-grid">
+            <button type="submit" class="btn-brand">Apply filters</button>
+        </div>
+    </form>
+
+    <div class="table-theme glass-surface">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Detail</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Users.Any())
+                {
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td>@user.Name</td>
+                            <td>@user.Role</td>
+                            <td><span class="status-tag">@user.Status</span></td>
+                            <td>@user.Detail</td>
+                            <td>
+                                @if (user.CanDelete)
+                                {
+                                    <form asp-action="DeleteDoctor" method="post" class="d-inline">
+                                        <input type="hidden" name="doctorId" value="@user.EntityId" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete doctor</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="soft-text">No action</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center py-4">No users matched the selected filters.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

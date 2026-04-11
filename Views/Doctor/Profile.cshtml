@@ -1,0 +1,58 @@
+@model DoctorOwnProfileViewModel
+@{
+    ViewData["Title"] = "Doctor Profile";
+    ViewData["PageTitle"] = "Profile";
+    ViewData["PageSubtitle"] = "Review doctor information, professional details, and live directory identity.";
+    Layout = "~/Views/Doctor/_DoctorLayout.cshtml";
+}
+
+<section class="profile-shell glass-surface tilt-card" data-tilt>
+    <img src="@Model.Doctor.AvatarPath" alt="@Model.Doctor.FullName" class="avatar-xl" />
+    <div>
+        <span class="eyebrow">Doctor account</span>
+        <h2 class="mt-3 mb-1">@Model.Doctor.FullName</h2>
+        <p class="mb-2">@Model.Doctor.Specialization</p>
+        <span class="status-tag">Profile active</span>
+    </div>
+</section>
+
+<section class="detail-grid">
+    <article class="detail-card">
+        <strong>Email</strong>
+        <span class="soft-text">@Model.Doctor.Email</span>
+    </article>
+    <article class="detail-card">
+        <strong>Experience</strong>
+        <span class="soft-text">@Model.Doctor.ExperienceYears years</span>
+    </article>
+    <article class="detail-card">
+        <strong>Hospital</strong>
+        <span class="soft-text">@Model.Doctor.HospitalName</span>
+    </article>
+    <article class="detail-card">
+        <strong>Specialization</strong>
+        <span class="soft-text">@Model.Doctor.Specialization</span>
+    </article>
+    <article class="detail-card">
+        <strong>Location</strong>
+        <span class="soft-text">@Model.Doctor.City</span>
+    </article>
+    <article class="detail-card">
+        <strong>Languages</strong>
+        <span class="soft-text">@Model.Doctor.Languages</span>
+    </article>
+</section>
+
+<section class="section-card glass-surface">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Actions</span>
+            <h3>Profile management</h3>
+        </div>
+    </div>
+
+    <div class="detail-card">
+        <strong>Directory visibility</strong>
+        <span class="soft-text">This profile is visible in the patient doctor directory, and new bookings will appear here automatically.</span>
+    </div>
+</section>

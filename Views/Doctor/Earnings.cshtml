@@ -1,0 +1,46 @@
+@model DoctorEarningsViewModel
+@{
+    ViewData["Title"] = "Earnings";
+    ViewData["PageTitle"] = "Earnings";
+    ViewData["PageSubtitle"] = "Review earnings totals derived from paid appointments in the shared booking flow.";
+    Layout = "~/Views/Doctor/_DoctorLayout.cshtml";
+}
+
+<section class="stats-grid">
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Total earnings</span>
+        <strong>@Model.TotalEarningsLabel</strong>
+        <span class="soft-text">Combined earnings across paid appointments.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">This month</span>
+        <strong>@Model.ThisMonthLabel</strong>
+        <span class="soft-text">Current month revenue snapshot.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Average per visit</span>
+        <strong>@Model.AveragePerVisitLabel</strong>
+        <span class="soft-text">Average realized fee across paid visits.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Pending payout</span>
+        <strong>@Model.PendingPayoutLabel</strong>
+        <span class="soft-text">Bookings waiting on payment completion.</span>
+    </article>
+</section>
+
+<section class="section-card glass-surface">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Trend</span>
+            <h3>Earnings overview</h3>
+        </div>
+    </div>
+
+    <div class="chart-placeholder">
+        <div class="text-center">
+            <strong>Revenue feed connected</strong>
+            <p class="soft-text mb-0">Patient payment confirmations update the doctor earnings cards directly.</p>
+        </div>
+    </div>
+</section>

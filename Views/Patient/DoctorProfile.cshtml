@@ -1,0 +1,76 @@
+@model DoctorProfileViewModel
+@{
+    ViewData["Title"] = "Doctor Profile";
+    ViewData["PageTitle"] = "Doctor Profile";
+    ViewData["PageSubtitle"] = "Review verified doctor details, experience, and available slots before you confirm a booking.";
+    Layout = "~/Views/Patient/_PatientLayout.cshtml";
+}
+
+<section class="profile-shell glass-surface tilt-card" data-tilt>
+    <img src="@Model.Doctor.AvatarPath" alt="@Model.Doctor.FullName" class="avatar-xl" />
+    <div>
+        <span class="eyebrow">Doctor profile</span>
+        <h2 class="mt-3 mb-1">@Model.Doctor.FullName</h2>
+        <p class="mb-2">@Model.Doctor.Specialization</p>
+        <span class="status-tag">@Model.Doctor.Rating.ToString("0.0") Rating</span>
+    </div>
+</section>
+
+<section class="dual-grid">
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">About doctor</span>
+                <h3>Professional summary</h3>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-card">
+                <strong>Experience</strong>
+                <span class="soft-text">@Model.Doctor.ExperienceYears+ years of clinical practice.</span>
+            </div>
+            <div class="detail-card">
+                <strong>Focus area</strong>
+                <span class="soft-text">@Model.Doctor.Bio</span>
+            </div>
+            <div class="detail-card">
+                <strong>Clinic</strong>
+                <span class="soft-text">@Model.Doctor.HospitalName, @Model.Doctor.City</span>
+            </div>
+            <div class="detail-card">
+                <strong>Languages</strong>
+                <span class="soft-text">@Model.Doctor.Languages</span>
+            </div>
+        </div>
+    </article>
+
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Available slots</span>
+                <h3>Next appointment options</h3>
+            </div>
+        </div>
+
+        <div class="slot-grid mb-4">
+            @foreach (var slot in Model.AvailableSlots)
+            {
+                <span class="slot-chip">@slot</span>
+            }
+        </div>
+
+        <div class="summary-list mb-4">
+            <div class="summary-row">
+                <span>Consultation fee</span>
+                <strong>@PortalFormatting.FormatCurrency(Model.Doctor.ConsultationFee)</strong>
+            </div>
+            <div class="summary-row">
+                <span>Verification</span>
+                <strong>Admin approved</strong>
+            </div>
+        </div>
+
+        <a class="btn-brand w-100" asp-action="BookAppointment" asp-route-doctorId="@Model.Doctor.Id">Continue to booking</a>
+    </article>
+</section>

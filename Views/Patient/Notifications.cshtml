@@ -1,0 +1,30 @@
+@model NotificationsViewModel
+@{
+    ViewData["Title"] = "Notifications";
+    ViewData["PageTitle"] = "Notifications";
+    ViewData["PageSubtitle"] = "Keep track of booking, payment, and confirmation alerts generated from live role activity.";
+    Layout = "~/Views/Patient/_PatientLayout.cshtml";
+}
+
+<section class="section-card glass-surface">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Alerts</span>
+            <h3>Recent notifications</h3>
+        </div>
+    </div>
+
+    <div class="timeline-list">
+        @foreach (var notification in Model.Notifications)
+        {
+            <article class="timeline-item">
+                <div class="icon-stat">@notification.IndexLabel</div>
+                <div class="timeline-copy">
+                    <strong>@notification.Title</strong>
+                    <span>@notification.Message</span>
+                </div>
+                <span class="status-tag">@notification.Label</span>
+            </article>
+        }
+    </div>
+</section>

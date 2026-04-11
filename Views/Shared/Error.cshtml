@@ -1,0 +1,27 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<section class="container">
+    <div class="error-shell glass-surface tilt-card" data-tilt>
+        <span class="eyebrow">Request error</span>
+        <h1 class="mt-3">The page could not be completed.</h1>
+        <p class="soft-text mb-4">
+            Something unexpected interrupted the current request. Return to the home page or review the request trace below for debugging.
+        </p>
+
+        @if (Model.ShowRequestId)
+        {
+            <p class="mb-4">
+                <strong>Request ID:</strong>
+                <code>@Model.RequestId</code>
+            </p>
+        }
+
+        <div class="d-flex flex-wrap gap-3">
+            <a class="btn-brand" asp-controller="Home" asp-action="Index">Back to Home</a>
+            <a class="btn-brand-outline" asp-controller="Auth" asp-action="Login">Go to Login</a>
+        </div>
+    </div>
+</section>

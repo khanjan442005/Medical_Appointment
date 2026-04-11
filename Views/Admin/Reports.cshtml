@@ -1,0 +1,46 @@
+@model ReportsViewModel
+@{
+    ViewData["Title"] = "Reports";
+    ViewData["PageTitle"] = "Reports";
+    ViewData["PageSubtitle"] = "Review usage and platform activity derived from the connected patient, doctor, and admin workflows.";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+<section class="stats-grid">
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Weekly appointments</span>
+        <strong>@Model.Metrics.WeeklyAppointments.ToString("D2")</strong>
+        <span class="soft-text">Bookings recorded in the current activity window.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">New registrations</span>
+        <strong>@Model.Metrics.NewRegistrations.ToString("D2")</strong>
+        <span class="soft-text">Combined patient and doctor signups.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Approval rate</span>
+        <strong>@Model.Metrics.ApprovalRateLabel</strong>
+        <span class="soft-text">Doctor verification conversion rate.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Revenue trend</span>
+        <strong>@Model.Metrics.RevenueTrendLabel</strong>
+        <span class="soft-text">Change versus the previous month.</span>
+    </article>
+</section>
+
+<section class="section-card glass-surface">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Analytics</span>
+            <h3>Report visualization</h3>
+        </div>
+    </div>
+
+    <div class="chart-placeholder">
+        <div class="text-center">
+            <strong>Live report feed ready</strong>
+            <p class="soft-text mb-0">Doctor approvals, patient bookings, and payment revenue all update the same reporting layer.</p>
+        </div>
+    </div>
+</section>

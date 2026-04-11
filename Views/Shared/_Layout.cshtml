@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - MediCore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="public-shell">
+    <div class="ambient-layer">
+        <span class="ambient-orb orb-a" data-orbit></span>
+        <span class="ambient-orb orb-b" data-orbit></span>
+        <span class="ambient-orb orb-c" data-orbit></span>
+    </div>
+
+    <header class="public-header">
+        <div class="container-fluid-wide public-nav">
+            <a class="brand-lockup" asp-controller="Home" asp-action="Index">
+                <span class="brand-mark">MC</span>
+                <span class="brand-copy">
+                    <strong>MediCore</strong>
+                    <span>Doctor Appointment System</span>
+                </span>
+            </a>
+
+            <div class="nav-actions">
+                <a class="nav-link-soft" asp-controller="Auth" asp-action="Register">Register</a>
+                <a class="btn-brand" asp-controller="Auth" asp-action="Login">Login</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="public-main">
+        @RenderBody()
+    </main>
+
+    <footer class="public-footer">
+        <div class="container-fluid-wide">
+            Copyright @DateTime.Now.Year MediCore. Patient, doctor, and admin workflows in one system.
+        </div>
+    </footer>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("PageScripts", required: false)
+</body>
+</html>

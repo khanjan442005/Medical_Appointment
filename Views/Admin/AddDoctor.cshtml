@@ -1,0 +1,81 @@
+@model AdminCreateDoctorInputModel
+@{
+    ViewData["Title"] = "Add Doctor";
+    ViewData["PageTitle"] = "Add Doctor";
+    ViewData["PageSubtitle"] = "Create a verified doctor account directly from the admin panel.";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+<section class="section-card glass-surface">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Direct onboarding</span>
+            <h3>Create verified doctor</h3>
+        </div>
+    </div>
+
+    @if (ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+    {
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
+    }
+
+    <form method="post" class="auth-form-stack">
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <label class="auth-label">Full name</label>
+                <input asp-for="Name" class="form-control" placeholder="Doctor full name" />
+                <span asp-validation-for="Name" class="text-danger small d-block mt-2"></span>
+            </div>
+            <div class="col-lg-6">
+                <label class="auth-label">Email</label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="doctor@medicore.in" />
+                <span asp-validation-for="Email" class="text-danger small d-block mt-2"></span>
+            </div>
+            <div class="col-lg-6">
+                <label class="auth-label">Specialization</label>
+                <input asp-for="Specialization" class="form-control" placeholder="Cardiology, Neurology, Pediatrics" />
+                <span asp-validation-for="Specialization" class="text-danger small d-block mt-2"></span>
+            </div>
+            <div class="col-lg-6">
+                <label class="auth-label">License number</label>
+                <input asp-for="License" class="form-control" placeholder="Medical license number" />
+                <span asp-validation-for="License" class="text-danger small d-block mt-2"></span>
+            </div>
+            <div class="col-lg-4">
+                <label class="auth-label">Experience</label>
+                <input asp-for="ExperienceYears" type="number" class="form-control" min="1" max="60" />
+                <span asp-validation-for="ExperienceYears" class="text-danger small d-block mt-2"></span>
+            </div>
+            <div class="col-lg-4">
+                <label class="auth-label">City</label>
+                <input asp-for="City" class="form-control" placeholder="Ahmedabad" />
+                <span asp-validation-for="City" class="text-danger small d-block mt-2"></span>
+            </div>
+            <div class="col-lg-4">
+                <label class="auth-label">Consultation fee</label>
+                <input asp-for="ConsultationFee" type="number" class="form-control" min="100" max="5000" step="50" />
+                <span asp-validation-for="ConsultationFee" class="text-danger small d-block mt-2"></span>
+            </div>
+            <div class="col-12">
+                <label class="auth-label">Hospital name</label>
+                <input asp-for="HospitalName" class="form-control" placeholder="Clinic or hospital name" />
+                <span asp-validation-for="HospitalName" class="text-danger small d-block mt-2"></span>
+            </div>
+            <div class="col-lg-6">
+                <label class="auth-label">Password</label>
+                <input asp-for="Password" type="password" class="form-control" placeholder="Create password" />
+                <span asp-validation-for="Password" class="text-danger small d-block mt-2"></span>
+            </div>
+            <div class="col-lg-6">
+                <label class="auth-label">Confirm password</label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger small d-block mt-2"></span>
+            </div>
+        </div>
+
+        <div class="d-flex gap-3 flex-wrap mt-4">
+            <button type="submit" class="btn-brand">Create verified doctor</button>
+            <a class="btn-brand-outline" asp-action="UserManagement">Cancel</a>
+        </div>
+    </form>
+</section>

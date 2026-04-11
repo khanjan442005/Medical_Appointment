@@ -1,0 +1,67 @@
+@model FindDoctorViewModel
+@{
+    ViewData["Title"] = "Find Doctors";
+    ViewData["PageTitle"] = "Find Doctors";
+    ViewData["PageSubtitle"] = "Browse verified specialists. Newly approved doctors will appear here automatically after admin approval.";
+    Layout = "~/Views/Patient/_PatientLayout.cshtml";
+}
+
+<section class="panel-hero glass-surface tilt-card" data-tilt>
+    <span class="eyebrow">Doctor directory</span>
+    <h2>Find the right specialist for your next visit.</h2>
+    <p class="soft-text mb-0">
+        @Model.VerifiedDoctorsCount verified doctors are currently available. @Model.PendingReviewCount registration request(s) are still pending admin review.
+    </p>
+</section>
+
+<section class="section-card glass-surface mb-4">
+    <form method="get" class="row g-3 align-items-end">
+        <div class="col-lg-5">
+            <label class="auth-label">Search doctor</label>
+            <input name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Name, specialization, hospital, city" />
+        </div>
+        <div class="col-lg-4">
+            <label class="auth-label">Specialization</label>
+            <select name="specialization" class="form-select">
+                <option value="">All specializations</option>
+                @foreach (var specialization in Model.Specializations)
+                {
+                    <option value="@specialization" selected="@(Model.SelectedSpecialization == specialization ? "selected" : null)">@specialization</option>
+                }
+            </select>
+        </div>
+        <div class="col-lg-3 d-grid">
+            <button type="submit" class="btn-brand">Apply filters</button>
+        </div>
+    </form>
+</section>
+
+<section class="doctor-grid">
+    @if (Model.Doctors.Any())
+    {
+        @foreach (var doctor in Model.Doctors)
+        {
+            <article class="doctor-tile glass-surface tilt-card" data-tilt>
+                <div class="d-flex align-items-start gap-3 mb-3">
+                    <img src="@doctor.AvatarPath" alt="@doctor.FullName" class="avatar-lg" />
+                    <div>
+                        <strong>@doctor.FullName</strong>
+                        <span class="doctor-meta">@doctor.Specialization</span>
+                    </div>
+                </div>
+                <p class="mb-3">@doctor.Rating.ToString("0.0") rating, @doctor.ExperienceYears+ years experience, @doctor.HospitalName, @doctor.City.</p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a class="btn-surface" asp-action="DoctorProfile" asp-route-id="@doctor.Id">View profile</a>
+                    <a class="btn-brand" asp-action="BookAppointment" asp-route-doctorId="@doctor.Id">Book appointment</a>
+                </div>
+            </article>
+        }
+    }
+    else
+    {
+        <article class="section-card glass-surface">
+            <strong>No doctors matched your current filters.</strong>
+            <p class="soft-text mb-0">Try a broader search term or clear specialization filtering.</p>
+        </article>
+    }
+</section>

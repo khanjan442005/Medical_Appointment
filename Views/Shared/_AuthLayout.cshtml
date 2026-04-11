@@ -1,0 +1,78 @@
+@{
+    var authTitle = ViewData["AuthTitle"] as string ?? "Access the MediCore platform.";
+    var authSubtitle = ViewData["AuthSubtitle"] as string ?? "Secure sign-in and registration for patient, doctor, and admin users.";
+    var authTag = ViewData["AuthTag"] as string ?? "Unified access";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - MediCore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="auth-shell">
+    <div class="ambient-layer">
+        <span class="ambient-orb orb-a" data-orbit></span>
+        <span class="ambient-orb orb-b" data-orbit></span>
+        <span class="ambient-orb orb-c" data-orbit></span>
+    </div>
+
+    <main class="container-fluid-wide auth-layout">
+        <section class="auth-copy-panel glass-surface tilt-card" data-tilt>
+            <div>
+                <a class="brand-lockup" asp-controller="Home" asp-action="Index">
+                    <span class="brand-mark">MC</span>
+                    <span class="brand-copy">
+                        <strong>MediCore</strong>
+                        <span>Doctor Appointment System</span>
+                    </span>
+                </a>
+
+                <span class="eyebrow mt-4">@authTag</span>
+                <h1>@authTitle</h1>
+                <p>@authSubtitle</p>
+            </div>
+
+            <div class="auth-mosaic">
+                <article class="auth-mini-card glass-surface">
+                    <span class="soft-text">Care flow</span>
+                    <strong>3 user roles</strong>
+                    <p>Dedicated access flows for patients, doctors, and administrators.</p>
+                </article>
+
+                <article class="auth-mini-card glass-surface">
+                    <span class="soft-text">Motion</span>
+                    <strong>Modern interface</strong>
+                    <p>Subtle depth and motion keep the experience polished without feeling heavy.</p>
+                </article>
+
+                <article class="auth-mini-card glass-surface">
+                    <span class="soft-text">Speed</span>
+                    <strong>Focused forms</strong>
+                    <p>Clear spacing and readable controls keep sign-in and onboarding straightforward.</p>
+                </article>
+
+                <article class="auth-mini-card glass-surface">
+                    <span class="soft-text">Clarity</span>
+                    <strong>Responsive layout</strong>
+                    <p>Desktop and mobile views keep the same structure and visual clarity.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="auth-form-panel glass-surface">
+            @RenderBody()
+        </section>
+    </main>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <partial name="_ValidationScriptsPartial" />
+    @await RenderSectionAsync("PageScripts", required: false)
+</body>
+</html>

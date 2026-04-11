@@ -1,0 +1,79 @@
+@model DoctorVerificationViewModel
+@{
+    ViewData["Title"] = "Doctor Verification";
+    ViewData["PageTitle"] = "Doctor Verification";
+    ViewData["PageSubtitle"] = "Approve or reject doctor requests. Approved doctors will appear in the patient directory immediately.";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+<section class="section-card glass-surface">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Verification queue</span>
+            <h3>Pending doctor approvals</h3>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success mb-4">@TempData["Success"]</div>
+    }
+
+    <div class="summary-list mb-4">
+        <div class="summary-row">
+            <span>Verified doctors</span>
+            <strong>@Model.VerifiedDoctorsCount.ToString("D2")</strong>
+        </div>
+        <div class="summary-row">
+            <span>Pending approvals</span>
+            <strong>@Model.PendingRequests.Count.ToString("D2")</strong>
+        </div>
+    </div>
+
+    <div class="table-theme glass-surface">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Specialization</th>
+                    <th>License</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.PendingRequests.Any())
+                {
+                    @foreach (var request in Model.PendingRequests)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@request.FullName</strong>
+                                <div class="soft-text">@request.Email</div>
+                            </td>
+                            <td>@request.Specialization</td>
+                            <td>@request.LicenseNumber</td>
+                            <td><span class="status-tag">@request.Status</span></td>
+                            <td class="d-flex gap-2">
+                                <form asp-action="ApproveDoctor" method="post">
+                                    <input type="hidden" name="requestId" value="@request.Id" />
+                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                </form>
+                                <form asp-action="RejectDoctor" method="post">
+                                    <input type="hidden" name="requestId" value="@request.Id" />
+                                    <button type="submit" class="btn btn-brand-outline btn-sm">Reject</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center py-4">No pending doctor approvals right now.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

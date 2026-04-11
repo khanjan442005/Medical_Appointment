@@ -1,0 +1,107 @@
+@model BookAppointmentViewModel
+@{
+    ViewData["Title"] = "Book Appointment";
+    ViewData["PageTitle"] = "Book Appointment";
+    ViewData["PageSubtitle"] = "Create a booking request. After payment, the status updates instantly for both doctor and admin views.";
+    Layout = "~/Views/Patient/_PatientLayout.cshtml";
+}
+
+<section class="dual-grid">
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Selected doctor</span>
+                <h3>Doctor and schedule details</h3>
+            </div>
+        </div>
+
+        @if (ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+        {
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
+        }
+
+        <div class="profile-shell mb-4">
+            <img src="@Model.Doctor.AvatarPath" alt="@Model.Doctor.FullName" class="avatar-lg" />
+            <div>
+                <h4 class="mb-1">@Model.Doctor.FullName</h4>
+                <p class="mb-1">@Model.Doctor.Specialization</p>
+                <span class="status-tag">@Model.Doctor.Rating.ToString("0.0") Rating</span>
+            </div>
+        </div>
+
+        <form method="post" class="auth-form-stack">
+            <input asp-for="Input.DoctorId" type="hidden" />
+
+            <div class="detail-grid">
+                <div class="detail-card">
+                    <strong>Select date</strong>
+                    <input asp-for="Input.AppointmentDate" type="date" class="form-control mt-3" min="@Model.MinimumDate" />
+                    <span asp-validation-for="Input.AppointmentDate" class="text-danger small d-block mt-2"></span>
+                </div>
+                <div class="detail-card">
+                    <strong>Consultation summary</strong>
+                    <p class="mb-0">30-minute consultation with digital notes, prescription summary, and live status tracking.</p>
+                </div>
+            </div>
+
+            <div class="section-card glass-surface mt-4">
+                <div class="section-head mb-3">
+                    <div>
+                        <span class="eyebrow">Available slots</span>
+                        <h3>Select preferred time</h3>
+                    </div>
+                </div>
+
+                <div class="slot-grid">
+                    @foreach (var slot in Model.AvailableSlots)
+                    {
+                        var slotId = $"time-slot-{Model.Doctor.Id}-{slot.Replace(" ", string.Empty).Replace(":", string.Empty).ToLowerInvariant()}";
+                        <label class="slot-choice">
+                            <input asp-for="Input.TimeSlot" id="@slotId" type="radio" value="@slot" />
+                            <span class="slot-chip">@slot</span>
+                        </label>
+                    }
+                </div>
+                <span asp-validation-for="Input.TimeSlot" class="text-danger small d-block mt-3"></span>
+            </div>
+
+            <div class="mt-4 d-grid gap-3">
+                <button type="submit" class="btn-brand">Continue to payment</button>
+                <a class="btn-brand-outline" asp-action="FindDoctor">Back to doctors</a>
+            </div>
+        </form>
+    </article>
+
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Booking summary</span>
+                <h3>Charges and next step</h3>
+            </div>
+        </div>
+
+        <div class="summary-list">
+            <div class="summary-row">
+                <span>Doctor</span>
+                <strong>@Model.Doctor.FullName</strong>
+            </div>
+            <div class="summary-row">
+                <span>Consultation fee</span>
+                <strong>@PortalFormatting.FormatCurrency(Model.Doctor.ConsultationFee)</strong>
+            </div>
+            <div class="summary-row">
+                <span>Platform fee</span>
+                <strong>INR 50</strong>
+            </div>
+            <div class="summary-row">
+                <span>Total</span>
+                <strong>@PortalFormatting.FormatCurrency(Model.Doctor.ConsultationFee + 50)</strong>
+            </div>
+        </div>
+
+        <div class="detail-card mt-4">
+            <strong>Live sync</strong>
+            <span class="soft-text">As soon as the booking is created, the payment pending status appears in both the doctor panel and admin reports.</span>
+        </div>
+    </article>
+</section>

@@ -1,0 +1,52 @@
+@model PatientRegistrationInputModel
+@{
+    ViewData["Title"] = "Patient Register";
+    ViewData["AuthTag"] = "Patient registration";
+    ViewData["AuthTitle"] = "Create a patient account.";
+    ViewData["AuthSubtitle"] = "Register to book appointments, receive notifications, and manage your healthcare activity.";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<section class="auth-form-card glass-surface tilt-card" data-tilt>
+    <span class="eyebrow">Patient</span>
+    <h2>Create patient account</h2>
+    <p>Set up your account to access appointments, profile updates, and visit history. New patient registrations are also reflected in the admin panel automatically.</p>
+
+    @if (ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+    {
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger mt-3"></div>
+    }
+
+    <form method="post" class="auth-form-stack">
+        <div>
+            <label class="auth-label">Full name</label>
+            <input asp-for="Name" class="form-control" placeholder="Full name" />
+            <span asp-validation-for="Name" class="text-danger small d-block mt-2"></span>
+        </div>
+
+        <div>
+            <label class="auth-label">Email</label>
+            <input asp-for="Email" type="email" class="form-control" placeholder="name@medicore.com" data-strict-email="true" />
+            <span asp-validation-for="Email" class="text-danger small d-block mt-2"></span>
+        </div>
+
+        <div>
+            <label class="auth-label">Password</label>
+            <input asp-for="Password" type="password" class="form-control" placeholder="Create password" data-password-policy="strong" data-required-message="Password is required." />
+            <span asp-validation-for="Password" class="text-danger small d-block mt-2"></span>
+        </div>
+
+        <div>
+            <label class="auth-label">Confirm password</label>
+            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm password" data-confirm-password="true" data-required-message="Confirm password is required." />
+            <span asp-validation-for="ConfirmPassword" class="text-danger small d-block mt-2"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Create account</button>
+    </form>
+
+    <div class="auth-switch">
+        Already have access?
+        <a asp-controller="Auth" asp-action="Login">Sign in</a>
+    </div>
+</section>

@@ -1,0 +1,122 @@
+@model PatientDashboardViewModel
+@{
+    var quickBookDoctor = Model.FeaturedDoctors.FirstOrDefault();
+    ViewData["Title"] = "Patient Dashboard";
+    ViewData["PageTitle"] = "Patient Overview";
+    ViewData["PageSubtitle"] = "Track live appointments, doctor availability, and payment updates from one patient dashboard.";
+    Layout = "~/Views/Patient/_PatientLayout.cshtml";
+}
+
+<section class="panel-hero glass-surface tilt-card" data-tilt>
+    <span class="eyebrow">Patient summary</span>
+    <h2>Welcome back, @Model.Patient.FullName.Split(' ')[0].</h2>
+    <p class="soft-text mb-0">
+        Booking, payment, and confirmation status have been connected with doctor and admin workflows.
+    </p>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Upcoming appointments</span>
+        <strong>@Model.UpcomingAppointmentsCount.ToString("D2")</strong>
+        <span class="soft-text">Live appointments across booking and payment flow.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Total visits</span>
+        <strong>@Model.TotalVisitsCount.ToString("D2")</strong>
+        <span class="soft-text">Completed and upcoming visits tracked together.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Verified doctors</span>
+        <strong>@Model.SavedDoctorsCount.ToString("D2")</strong>
+        <span class="soft-text">Directory updates after admin approval.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Medical records</span>
+        <strong>@Model.MedicalRecordsCount.ToString("D2")</strong>
+        <span class="soft-text">Consultation notes and history grouped together.</span>
+    </article>
+</section>
+
+<section class="dual-grid">
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Upcoming visits</span>
+                <h3>Upcoming care timeline</h3>
+            </div>
+            <a class="btn-surface" asp-controller="Patient" asp-action="AppointmentHistory">See history</a>
+        </div>
+
+        <div class="timeline-list">
+            @if (Model.UpcomingAppointments.Any())
+            {
+                @foreach (var appointment in Model.UpcomingAppointments)
+                {
+                    <article class="timeline-item">
+                        <div class="timeline-slot">@appointment.TimeSlot</div>
+                        <div class="timeline-copy">
+                            <strong>@appointment.DoctorName</strong>
+                            <span>@appointment.DoctorSpecialization on @appointment.DateLabel</span>
+                        </div>
+                        <span class="status-tag">@appointment.Status</span>
+                    </article>
+                }
+            }
+            else
+            {
+                <article class="timeline-item">
+                    <div class="timeline-slot">NA</div>
+                    <div class="timeline-copy">
+                        <strong>No upcoming visit</strong>
+                        <span>Find a verified doctor and create a new booking.</span>
+                    </div>
+                    <span class="status-tag">Ready</span>
+                </article>
+            }
+        </div>
+    </article>
+
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Quick actions</span>
+                <h3>Quick actions</h3>
+            </div>
+        </div>
+
+        <div class="d-grid gap-3">
+            <a class="btn-brand" asp-controller="Patient" asp-action="FindDoctor">Find a doctor</a>
+            @if (quickBookDoctor is not null)
+            {
+                <a class="btn-brand-outline" asp-controller="Patient" asp-action="BookAppointment" asp-route-doctorId="@quickBookDoctor.Id">Book appointment</a>
+            }
+            else
+            {
+                <a class="btn-brand-outline" asp-controller="Patient" asp-action="FindDoctor">Book appointment</a>
+            }
+            <a class="btn-brand-outline" asp-controller="Patient" asp-action="AppointmentHistory">Review payments</a>
+        </div>
+    </article>
+</section>
+
+<section class="section-card glass-surface">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Featured doctors</span>
+            <h3>Verified specialists</h3>
+        </div>
+        <a class="btn-surface" asp-controller="Patient" asp-action="FindDoctor">Open directory</a>
+    </div>
+
+    <div class="doctor-grid">
+        @foreach (var doctor in Model.FeaturedDoctors)
+        {
+            <a class="doctor-tile glass-surface tilt-card" data-tilt asp-controller="Patient" asp-action="DoctorProfile" asp-route-id="@doctor.Id">
+                <strong>@doctor.FullName</strong>
+                <span class="doctor-meta">@doctor.Specialization, @doctor.City</span>
+                <p class="mb-0">@doctor.Rating.ToString("0.0") rating, @doctor.ExperienceYears+ years experience, @PortalFormatting.FormatCurrency(doctor.ConsultationFee) consultation.</p>
+            </a>
+        }
+    </div>
+</section>

@@ -1,0 +1,52 @@
+@model DoctorAvailabilityViewModel
+@{
+    ViewData["Title"] = "Availability";
+    ViewData["PageTitle"] = "Availability";
+    ViewData["PageSubtitle"] = "Current consultation timings are shared here for the booking flow used by patients.";
+    Layout = "~/Views/Doctor/_DoctorLayout.cshtml";
+}
+
+<section class="dual-grid">
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Availability</span>
+                <h3>Manage schedule</h3>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-card">
+                <strong>Live booking sync</strong>
+                <span class="soft-text">The appointment slots shown to patients are served from this doctor availability setup.</span>
+            </div>
+            <div class="detail-card">
+                <strong>Current mode</strong>
+                <span class="soft-text">The schedule is currently read-only in demo mode, but it remains fully connected to patient bookings.</span>
+            </div>
+        </div>
+    </article>
+
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Current schedule</span>
+                <h3>Saved timing</h3>
+            </div>
+        </div>
+
+        <div class="timeline-list">
+            @foreach (var slot in Model.Slots)
+            {
+                <article class="timeline-item">
+                    <div class="timeline-slot">@slot.DayLabel</div>
+                    <div class="timeline-copy">
+                        <strong>@slot.SessionLabel</strong>
+                        <span>@slot.TimeRange</span>
+                    </div>
+                    <span class="status-tag">Active</span>
+                </article>
+            }
+        </div>
+    </article>
+</section>

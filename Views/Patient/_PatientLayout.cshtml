@@ -1,0 +1,104 @@
+@inject IDemoPortalService PortalService
+@{
+    var patient = PortalService.GetCurrentPatient();
+    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "Dashboard";
+    var pageTitle = ViewData["PageTitle"] as string ?? action;
+    var pageSubtitle = ViewData["PageSubtitle"] as string ?? "Manage bookings, doctors, payments, and medical history from one patient dashboard.";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - MediCore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="panel-shell panel-patient">
+    <div class="ambient-layer">
+        <span class="ambient-orb orb-a" data-orbit></span>
+        <span class="ambient-orb orb-b" data-orbit></span>
+        <span class="ambient-orb orb-c" data-orbit></span>
+    </div>
+
+    <div class="panel-layout">
+        <aside class="panel-sidebar glass-surface">
+            <a class="brand-lockup" asp-controller="Patient" asp-action="Dashboard">
+                <span class="brand-mark">MC</span>
+                <span class="brand-copy">
+                    <strong>Patient Panel</strong>
+                    <span>Care dashboard</span>
+                </span>
+            </a>
+
+            <nav class="panel-nav">
+                <a class="panel-link @(action == "Dashboard" ? "active" : "")" asp-controller="Patient" asp-action="Dashboard">
+                    <span>Overview</span>
+                    <span>01</span>
+                </a>
+                <a class="panel-link @(action == "FindDoctor" ? "active" : "")" asp-controller="Patient" asp-action="FindDoctor">
+                    <span>Find Doctors</span>
+                    <span>02</span>
+                </a>
+                <a class="panel-link @(action == "BookAppointment" ? "active" : "")" asp-controller="Patient" asp-action="BookAppointment">
+                    <span>Book Visit</span>
+                    <span>03</span>
+                </a>
+                <a class="panel-link @(action == "AppointmentHistory" ? "active" : "")" asp-controller="Patient" asp-action="AppointmentHistory">
+                    <span>History</span>
+                    <span>04</span>
+                </a>
+                <a class="panel-link @(action == "Notifications" ? "active" : "")" asp-controller="Patient" asp-action="Notifications">
+                    <span>Notifications</span>
+                    <span>05</span>
+                </a>
+                <a class="panel-link @(action == "Profile" ? "active" : "")" asp-controller="Patient" asp-action="Profile">
+                    <span>Profile</span>
+                    <span>06</span>
+                </a>
+            </nav>
+
+            <section class="panel-status glass-surface tilt-card" data-tilt>
+                <span class="soft-text">Health sync</span>
+                <strong>Care activity ready</strong>
+                <p class="soft-text mb-0">Appointments, payments, and notifications stay grouped in one clear view.</p>
+            </section>
+        </aside>
+
+        <div class="panel-main">
+            <header class="panel-topbar glass-surface">
+                <div>
+                    <span class="eyebrow">Patient Panel</span>
+                    <h1>@pageTitle</h1>
+                    <p class="soft-text mb-0">@pageSubtitle</p>
+                </div>
+
+                <div class="d-flex gap-2 flex-wrap">
+                    <a class="btn-surface" asp-controller="Patient" asp-action="Notifications">Alerts</a>
+                    <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="btn-brand-outline">Log Out</button>
+                    </form>
+                    <div class="panel-user-chip">
+                        <span class="avatar-pill">@patient.Initials</span>
+                        <div class="panel-user-meta">
+                            <strong>@patient.FullName</strong>
+                            <span class="panel-user-role">Patient account</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="panel-page">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("PageScripts", required: false)
+</body>
+</html>

@@ -1,0 +1,64 @@
+@model DoctorRegistrationInputModel
+@{
+    ViewData["Title"] = "Doctor Register";
+    ViewData["AuthTag"] = "Doctor registration";
+    ViewData["AuthTitle"] = "Create a doctor account.";
+    ViewData["AuthSubtitle"] = "Register professional details to manage appointments, availability, and patient workflow.";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<section class="auth-form-card glass-surface tilt-card" data-tilt>
+    <span class="eyebrow">Doctor</span>
+    <h2>Create doctor account</h2>
+    <p>Provide your professional details to continue. Once submitted, the admin verification queue will update automatically.</p>
+
+    @if (ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+    {
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger mt-3"></div>
+    }
+
+    <form method="post" class="auth-form-stack">
+        <div>
+            <label class="auth-label">Full name</label>
+            <input asp-for="Name" class="form-control" placeholder="Doctor name" />
+            <span asp-validation-for="Name" class="text-danger small d-block mt-2"></span>
+        </div>
+
+        <div>
+            <label class="auth-label">Email</label>
+            <input asp-for="Email" type="email" class="form-control" placeholder="doctor@medicore.in" data-strict-email="true" />
+            <span asp-validation-for="Email" class="text-danger small d-block mt-2"></span>
+        </div>
+
+        <div>
+            <label class="auth-label">Specialization</label>
+            <input asp-for="Specialization" class="form-control" placeholder="Cardiology, Dental, Neurology..." />
+            <span asp-validation-for="Specialization" class="text-danger small d-block mt-2"></span>
+        </div>
+
+        <div>
+            <label class="auth-label">License number</label>
+            <input asp-for="License" class="form-control" placeholder="Medical license number" />
+            <span asp-validation-for="License" class="text-danger small d-block mt-2"></span>
+        </div>
+
+        <div>
+            <label class="auth-label">Password</label>
+            <input asp-for="Password" type="password" class="form-control" placeholder="Create password" data-password-policy="strong" data-required-message="Password is required." />
+            <span asp-validation-for="Password" class="text-danger small d-block mt-2"></span>
+        </div>
+
+        <div>
+            <label class="auth-label">Confirm password</label>
+            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm password" data-confirm-password="true" data-required-message="Confirm password is required." />
+            <span asp-validation-for="ConfirmPassword" class="text-danger small d-block mt-2"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Create account</button>
+    </form>
+
+    <div class="auth-switch">
+        Already onboarded?
+        <a asp-controller="Auth" asp-action="Login">Sign in</a>
+    </div>
+</section>

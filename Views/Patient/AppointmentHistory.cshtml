@@ -1,0 +1,45 @@
+@model AppointmentHistoryViewModel
+@{
+    ViewData["Title"] = "Appointment History";
+    ViewData["PageTitle"] = "Appointment History";
+    ViewData["PageSubtitle"] = "Review completed, pending, and confirmed appointments from one live history table.";
+    Layout = "~/Views/Patient/_PatientLayout.cshtml";
+}
+
+<section class="section-card glass-surface">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Visit history</span>
+            <h3>Appointments</h3>
+        </div>
+    </div>
+
+    <div class="table-theme glass-surface">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Fee</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var appointment in Model.Appointments)
+                {
+                    <tr>
+                        <td>
+                            <strong>@appointment.DoctorName</strong>
+                            <div class="soft-text">@appointment.DoctorSpecialization</div>
+                        </td>
+                        <td>@appointment.DateLabel</td>
+                        <td>@appointment.TimeSlot</td>
+                        <td><span class="status-tag">@appointment.Status</span></td>
+                        <td>@appointment.FeeLabel</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

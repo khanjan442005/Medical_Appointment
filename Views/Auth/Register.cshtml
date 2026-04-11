@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "Register";
+    ViewData["AuthTag"] = "Role selection";
+    ViewData["AuthTitle"] = "Choose how you want to register.";
+    ViewData["AuthSubtitle"] = "Start with the role that matches how you will use the system.";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<section class="auth-form-card glass-surface tilt-card" data-tilt>
+    <span class="eyebrow">Register</span>
+    <h2>Select a role</h2>
+    <p>Select a role and continue to its registration form.</p>
+
+    <div class="role-option-grid">
+        <a class="role-option glass-surface" asp-controller="Patient" asp-action="Register">
+            <strong>Patient account</strong>
+            <p class="mb-0">Book appointments, manage notifications, and keep healthcare activity in one place.</p>
+        </a>
+
+        <a class="role-option glass-surface" asp-controller="Doctor" asp-action="Register">
+            <strong>Doctor account</strong>
+            <p class="mb-0">Set availability, review appointments, and manage doctor workflows.</p>
+        </a>
+
+        <a class="role-option glass-surface" asp-controller="Admin" asp-action="Register">
+            <strong>Admin account</strong>
+            <p class="mb-0">Manage verification, reports, and user operations across the system.</p>
+        </a>
+    </div>
+
+    <div class="auth-switch">
+        Already registered?
+        <a asp-controller="Auth" asp-action="Login">Go to login</a>
+    </div>
+</section>

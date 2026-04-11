@@ -1,0 +1,59 @@
+@model AdminAppointmentsViewModel
+@{
+    ViewData["Title"] = "Appointments";
+    ViewData["PageTitle"] = "Appointments";
+    ViewData["PageSubtitle"] = "Review every booking, payment state, and assigned doctor from one admin view.";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+<section class="section-card glass-surface">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Bookings</span>
+            <h3>Platform appointments</h3>
+        </div>
+        <a class="btn-brand-outline" asp-action="UserManagement">Back to users</a>
+    </div>
+
+    <div class="table-theme glass-surface">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Appointments.Any())
+                {
+                    @foreach (var appointment in Model.Appointments)
+                    {
+                        <tr>
+                            <td>@appointment.PatientName</td>
+                            <td>
+                                <strong>@appointment.DoctorName</strong>
+                                <div class="soft-text">@appointment.DoctorSpecialization</div>
+                            </td>
+                            <td>@appointment.DateLabel</td>
+                            <td>@appointment.TimeSlot</td>
+                            <td><span class="status-tag">@appointment.Status</span></td>
+                            <td>@appointment.PaymentMethod</td>
+                            <td>@appointment.FeeLabel</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-4">No appointments are available yet.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

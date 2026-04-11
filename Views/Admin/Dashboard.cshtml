@@ -1,0 +1,92 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    ViewData["PageTitle"] = "Admin Overview";
+    ViewData["PageSubtitle"] = "Review platform growth, approvals, and live activity fed by patient and doctor actions.";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+<section class="panel-hero glass-surface tilt-card" data-tilt>
+    <span class="eyebrow">Admin summary</span>
+    <h2>System overview at a glance.</h2>
+    <p class="soft-text mb-0">
+        Doctor approvals, patient bookings, and payment updates now feed the same admin layer.
+    </p>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Total doctors</span>
+        <strong>@Model.Metrics.TotalDoctors.ToString("D2")</strong>
+        <span class="soft-text">Verified providers across specialties.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Total patients</span>
+        <strong>@Model.Metrics.TotalPatients.ToString("D2")</strong>
+        <span class="soft-text">Registered patient accounts in the system.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Appointments</span>
+        <strong>@Model.Metrics.TotalAppointments.ToString("D2")</strong>
+        <span class="soft-text">Created from the connected booking flow.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Revenue</span>
+        <strong>@Model.Metrics.RevenueLabel</strong>
+        <span class="soft-text">Paid consultation snapshot.</span>
+    </article>
+</section>
+
+<section class="dual-grid">
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Priority items</span>
+                <h3>Priority operations</h3>
+            </div>
+        </div>
+
+        <div class="timeline-list">
+            <article class="timeline-item">
+                <div class="timeline-slot">@Model.Metrics.PendingDoctorVerifications.ToString("D2")</div>
+                <div class="timeline-copy">
+                    <strong>Doctor verifications</strong>
+                    <span>Profiles waiting for credential approval.</span>
+                </div>
+                <span class="status-tag">Queue</span>
+            </article>
+            <article class="timeline-item">
+                <div class="timeline-slot">@Model.Metrics.PendingPayments.ToString("D2")</div>
+                <div class="timeline-copy">
+                    <strong>Payment pending bookings</strong>
+                    <span>Appointments created by patients but not fully paid yet.</span>
+                </div>
+                <span class="status-tag">Open</span>
+            </article>
+            <article class="timeline-item">
+                <div class="timeline-slot">@Model.Metrics.ActiveDoctors.ToString("D2")</div>
+                <div class="timeline-copy">
+                    <strong>Active doctors</strong>
+                    <span>Approved doctors already visible in the patient directory.</span>
+                </div>
+                <span class="status-tag">Live</span>
+            </article>
+        </div>
+    </article>
+
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Quick actions</span>
+                <h3>Quick controls</h3>
+            </div>
+        </div>
+
+        <div class="d-grid gap-3">
+            <a class="btn-brand" asp-controller="Admin" asp-action="DoctorVerification">Review doctors</a>
+            <a class="btn-brand-outline" asp-controller="Admin" asp-action="UserManagement">Manage users</a>
+            <a class="btn-brand-outline" asp-controller="Admin" asp-action="Appointments">View appointments</a>
+            <a class="btn-brand-outline" asp-controller="Admin" asp-action="AddDoctor">Add doctor</a>
+        </div>
+    </article>
+</section>

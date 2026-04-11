@@ -1,0 +1,42 @@
+@model DoctorAppointmentsViewModel
+@{
+    ViewData["Title"] = "Appointments";
+    ViewData["PageTitle"] = "Appointments";
+    ViewData["PageSubtitle"] = "Review confirmed, pending-payment, and completed consultations from the doctor schedule table.";
+    Layout = "~/Views/Doctor/_DoctorLayout.cshtml";
+}
+
+<section class="section-card glass-surface">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Schedule</span>
+            <h3>Appointment queue</h3>
+        </div>
+    </div>
+
+    <div class="table-theme glass-surface">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var appointment in Model.Appointments)
+                {
+                    <tr>
+                        <td>@appointment.PatientName</td>
+                        <td>@appointment.DateLabel</td>
+                        <td>@appointment.TimeSlot</td>
+                        <td><span class="status-tag">@appointment.Status</span></td>
+                        <td>@appointment.PaymentMethod</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
