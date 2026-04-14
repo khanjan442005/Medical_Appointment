@@ -32,9 +32,9 @@
         <span class="soft-text">Directory updates after admin approval.</span>
     </article>
     <article class="stat-card glass-surface tilt-card" data-tilt>
-        <span class="soft-text">Medical records</span>
-        <strong>@Model.MedicalRecordsCount.ToString("D2")</strong>
-        <span class="soft-text">Consultation notes and history grouped together.</span>
+        <span class="soft-text">Pending payments</span>
+        <strong>@Model.PendingPaymentsCount.ToString("D2")</strong>
+        <span class="soft-text">Appointments waiting for payment confirmation.</span>
     </article>
 </section>
 
@@ -58,8 +58,18 @@
                         <div class="timeline-copy">
                             <strong>@appointment.DoctorName</strong>
                             <span>@appointment.DoctorSpecialization on @appointment.DateLabel</span>
+                            @if (appointment.CanContinuePayment)
+                            {
+                                <small class="soft-text d-block">Payment is still pending for this booking.</small>
+                            }
                         </div>
-                        <span class="status-tag">@appointment.Status</span>
+                        <div class="d-flex flex-column align-items-end gap-2">
+                            <span class="status-tag">@appointment.Status</span>
+                            @if (appointment.CanContinuePayment)
+                            {
+                                <a class="btn-surface" asp-controller="Patient" asp-action="Payment" asp-route-appointmentId="@appointment.Id">Pay now</a>
+                            }
+                        </div>
                     </article>
                 }
             }
@@ -97,6 +107,33 @@
             }
             <a class="btn-brand-outline" asp-controller="Patient" asp-action="AppointmentHistory">Review payments</a>
         </div>
+
+        <div class="timeline-list mt-4">
+            @if (Model.RecentNotifications.Any())
+            {
+                @foreach (var notification in Model.RecentNotifications)
+                {
+                    <article class="timeline-item">
+                        <div class="timeline-copy">
+                            <strong>@notification.Title</strong>
+                            <span>@notification.Message</span>
+                            <small class="soft-text d-block">@notification.TimeLabel</small>
+                        </div>
+                        <span class="status-tag">@notification.Label</span>
+                    </article>
+                }
+            }
+            else
+            {
+                <article class="timeline-item">
+                    <div class="timeline-copy">
+                        <strong>No recent alerts</strong>
+                        <span>Important payment and booking updates will appear here.</span>
+                    </div>
+                    <span class="status-tag">Clear</span>
+                </article>
+            }
+        </div>
     </article>
 </section>
 
@@ -110,13 +147,23 @@
     </div>
 
     <div class="doctor-grid">
-        @foreach (var doctor in Model.FeaturedDoctors)
+        @if (Model.FeaturedDoctors.Any())
         {
-            <a class="doctor-tile glass-surface tilt-card" data-tilt asp-controller="Patient" asp-action="DoctorProfile" asp-route-id="@doctor.Id">
-                <strong>@doctor.FullName</strong>
-                <span class="doctor-meta">@doctor.Specialization, @doctor.City</span>
-                <p class="mb-0">@doctor.Rating.ToString("0.0") rating, @doctor.ExperienceYears+ years experience, @PortalFormatting.FormatCurrency(doctor.ConsultationFee) consultation.</p>
-            </a>
+            @foreach (var doctor in Model.FeaturedDoctors)
+            {
+                <a class="doctor-tile glass-surface tilt-card" data-tilt asp-controller="Patient" asp-action="DoctorProfile" asp-route-id="@doctor.Id">
+                    <strong>@doctor.FullName</strong>
+                    <span class="doctor-meta">@doctor.Specialization, @doctor.City</span>
+                    <p class="mb-0">@doctor.Rating.ToString("0.0") rating, @doctor.ExperienceYears+ years experience, @PortalFormatting.FormatCurrency(doctor.ConsultationFee) consultation.</p>
+                </a>
+            }
+        }
+        else
+        {
+            <article class="detail-card">
+                <strong>No verified doctors available.</strong>
+                <span class="soft-text">Approved doctors will appear here automatically.</span>
+            </article>
         }
     </div>
 </section>
