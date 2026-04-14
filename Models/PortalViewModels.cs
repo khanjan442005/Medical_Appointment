@@ -16,6 +16,7 @@ public sealed class AppointmentCardViewModel
     public string PaymentMethod { get; set; } = string.Empty;
     public string PaymentStatus { get; set; } = string.Empty;
     public string CreatedAtLabel { get; set; } = string.Empty;
+    public bool CanContinuePayment { get; set; }
 }
 
 public sealed class NotificationItemViewModel
@@ -124,9 +125,10 @@ public sealed class PatientDashboardViewModel
     public int UpcomingAppointmentsCount { get; set; }
     public int TotalVisitsCount { get; set; }
     public int SavedDoctorsCount { get; set; }
-    public int MedicalRecordsCount { get; set; }
+    public int PendingPaymentsCount { get; set; }
     public List<AppointmentCardViewModel> UpcomingAppointments { get; set; } = [];
     public List<DemoDoctor> FeaturedDoctors { get; set; } = [];
+    public List<NotificationItemViewModel> RecentNotifications { get; set; } = [];
 }
 
 public sealed class FindDoctorViewModel
@@ -150,7 +152,23 @@ public sealed class BookAppointmentViewModel
     public DemoDoctor Doctor { get; set; } = new();
     public BookAppointmentInputModel Input { get; set; } = new();
     public List<string> AvailableSlots { get; set; } = [];
+    public List<BookingSlotOptionViewModel> SlotOptions { get; set; } = [];
+    public List<BookingScheduleItemViewModel> ScheduleItems { get; set; } = [];
     public string MinimumDate { get; set; } = string.Empty;
+}
+
+public sealed class BookingSlotOptionViewModel
+{
+    public string Value { get; set; } = string.Empty;
+    public List<string> AvailableDays { get; set; } = [];
+}
+
+public sealed class BookingScheduleItemViewModel
+{
+    public string DayLabel { get; set; } = string.Empty;
+    public string SessionLabel { get; set; } = string.Empty;
+    public string TimeRange { get; set; } = string.Empty;
+    public List<string> SlotValues { get; set; } = [];
 }
 
 public sealed class PaymentViewModel

@@ -110,6 +110,7 @@ public sealed class DoctorAvailabilitySlot
     public string DayLabel { get; set; } = string.Empty;
     public string SessionLabel { get; set; } = string.Empty;
     public string TimeRange { get; set; } = string.Empty;
+    public List<string> SlotValues { get; set; } = [];
 }
 
 public sealed class PortalMetrics

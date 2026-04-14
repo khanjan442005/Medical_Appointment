@@ -152,7 +152,12 @@ public sealed class DemoPortalService : IDemoPortalService
             {
                 DayLabel = group.Key.DayLabel,
                 SessionLabel = group.Key.SessionLabel,
-                TimeRange = group.Key.TimeRange
+                TimeRange = group.Key.TimeRange,
+                SlotValues = group
+                    .OrderBy(item => item.DisplayOrder)
+                    .Select(item => item.SlotValue)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList()
             })
             .ToList();
 
