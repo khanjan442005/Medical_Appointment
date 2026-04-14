@@ -105,11 +105,81 @@
                 <span>Profile rating</span>
                 <strong>@Model.Doctor.Rating.ToString("0.0") / 5</strong>
             </div>
+            <div class="summary-row">
+                <span>Next schedule preview</span>
+                <strong>@(Model.AvailabilityPreview.FirstOrDefault()?.DayLabel ?? "Not set")</strong>
+            </div>
         </div>
 
         <div class="detail-card mt-4">
             <strong>Bio</strong>
             <span class="soft-text">@Model.Doctor.Bio</span>
         </div>
+
+        <div class="timeline-list mt-4">
+            @if (Model.AvailabilityPreview.Any())
+            {
+                @foreach (var slot in Model.AvailabilityPreview)
+                {
+                    <article class="timeline-item">
+                        <div class="timeline-slot">@slot.DayLabel</div>
+                        <div class="timeline-copy">
+                            <strong>@slot.SessionLabel</strong>
+                            <span>@slot.TimeRange</span>
+                            <small class="soft-text d-block">Slots: @string.Join(", ", slot.SlotValues)</small>
+                        </div>
+                        <span class="status-tag">Live</span>
+                    </article>
+                }
+            }
+            else
+            {
+                <article class="timeline-item">
+                    <div class="timeline-copy">
+                        <strong>No schedule preview available.</strong>
+                        <span>Availability details will appear here when session data exists.</span>
+                    </div>
+                    <span class="status-tag">Empty</span>
+                </article>
+            }
+        </div>
     </article>
+</section>
+
+<section class="section-card glass-surface">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Recent activity</span>
+            <h3>Latest patient bookings</h3>
+        </div>
+        <a class="btn-surface" asp-action="Appointments">Open full schedule</a>
+    </div>
+
+    <div class="timeline-list">
+        @if (Model.RecentAppointments.Any())
+        {
+            @foreach (var appointment in Model.RecentAppointments)
+            {
+                <article class="timeline-item">
+                    <div class="timeline-slot">@appointment.TimeSlot</div>
+                    <div class="timeline-copy">
+                        <strong>@appointment.PatientName</strong>
+                        <span>@appointment.DateLabel</span>
+                        <small class="soft-text d-block">@appointment.PaymentStatus payment, created @appointment.CreatedAtLabel</small>
+                    </div>
+                    <span class="status-tag">@appointment.Status</span>
+                </article>
+            }
+        }
+        else
+        {
+            <article class="timeline-item">
+                <div class="timeline-copy">
+                    <strong>No recent appointments.</strong>
+                    <span>New patient bookings will appear here automatically.</span>
+                </div>
+                <span class="status-tag">Clear</span>
+            </article>
+        }
+    </div>
 </section>
