@@ -10,7 +10,7 @@
     <span class="eyebrow">Doctor summary</span>
     <h2>Welcome back, @Model.Doctor.FullName.</h2>
     <p class="soft-text mb-0">
-        Patient bookings and payment confirmations now arrive directly into your schedule queue.
+        Patient bookings, next clinic slots, payment follow-ups, and earnings now sit together inside one sharper doctor workspace.
     </p>
 </section>
 
@@ -47,6 +47,21 @@
             <a class="btn-surface" asp-controller="Doctor" asp-action="Appointments">Full schedule</a>
         </div>
 
+        <div class="summary-list mb-4">
+            <div class="summary-row">
+                <span>Upcoming bookings</span>
+                <strong>@Model.UpcomingAppointmentsCount.ToString("D2")</strong>
+            </div>
+            <div class="summary-row">
+                <span>Completed visits</span>
+                <strong>@Model.CompletedAppointmentsCount.ToString("D2")</strong>
+            </div>
+            <div class="summary-row">
+                <span>Next availability</span>
+                <strong>@Model.NextAvailabilityLabel</strong>
+            </div>
+        </div>
+
         <div class="table-theme glass-surface">
             <table class="table align-middle">
                 <thead>
@@ -58,13 +73,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var appointment in Model.UpcomingAppointments)
+                    @if (Model.UpcomingAppointments.Any())
+                    {
+                        @foreach (var appointment in Model.UpcomingAppointments)
+                        {
+                            <tr>
+                                <td>@appointment.PatientName</td>
+                                <td>@appointment.DateLabel</td>
+                                <td>@appointment.TimeSlot</td>
+                                <td><span class="status-tag">@appointment.Status</span></td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td>@appointment.PatientName</td>
-                            <td>@appointment.DateLabel</td>
-                            <td>@appointment.TimeSlot</td>
-                            <td><span class="status-tag">@appointment.Status</span></td>
+                            <td colspan="4" class="text-center py-4">No upcoming appointments are scheduled right now.</td>
                         </tr>
                     }
                 </tbody>
@@ -75,15 +99,43 @@
     <article class="section-card glass-surface">
         <div class="section-head">
             <div>
-                <span class="eyebrow">Actions</span>
-                <h3>Quick actions</h3>
+                <span class="eyebrow">Clinical actions</span>
+                <h3>Doctor workspace</h3>
             </div>
         </div>
 
-        <div class="d-grid gap-3">
+        <div class="d-grid gap-3 mb-4">
             <a class="btn-brand" asp-controller="Doctor" asp-action="Appointments">Review appointments</a>
-            <a class="btn-brand-outline" asp-controller="Doctor" asp-action="Availability">Update availability</a>
+            <a class="btn-brand-outline" asp-controller="Doctor" asp-action="Availability">View availability</a>
             <a class="btn-brand-outline" asp-controller="Doctor" asp-action="Earnings">Review earnings</a>
+            <a class="btn-brand-outline" asp-controller="Doctor" asp-action="Profile">Open profile</a>
+        </div>
+
+        <div class="timeline-list">
+            @if (Model.AvailabilityPreview.Any())
+            {
+                @foreach (var slot in Model.AvailabilityPreview)
+                {
+                    <article class="timeline-item">
+                        <div class="timeline-slot">@slot.DayLabel</div>
+                        <div class="timeline-copy">
+                            <strong>@slot.SessionLabel</strong>
+                            <span>@slot.TimeRange</span>
+                        </div>
+                        <span class="status-tag">Active</span>
+                    </article>
+                }
+            }
+            else
+            {
+                <article class="timeline-item">
+                    <div class="timeline-copy">
+                        <strong>No availability saved.</strong>
+                        <span>Schedule details will appear here once doctor timing is configured.</span>
+                    </div>
+                    <span class="status-tag">Empty</span>
+                </article>
+            }
         </div>
     </article>
 </section>

@@ -1,6 +1,11 @@
 @inject IDemoPortalService PortalService
 @{
     var doctor = PortalService.GetCurrentDoctor();
+    var today = DateOnly.FromDateTime(DateTime.Today);
+    var appointments = PortalService.GetAppointmentsForDoctor(doctor.Id);
+    var currentMonthRevenue = appointments
+        .Where(appointment => appointment.PaymentCompleted && appointment.AppointmentDate.Year == today.Year && appointment.AppointmentDate.Month == today.Month)
+        .Sum(appointment => appointment.TotalAmount);
     var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "Dashboard";
     var pageTitle = ViewData["PageTitle"] as string ?? action;
     var pageSubtitle = ViewData["PageSubtitle"] as string ?? "Review appointments, availability, profile, and earnings from one doctor dashboard.";
@@ -83,8 +88,8 @@
 
                 <section class="panel-status glass-surface tilt-card" data-tilt>
                     <span class="soft-text">Clinical lane</span>
-                    <strong>Today's schedule ready</strong>
-                    <p class="soft-text mb-0">Appointments, patient load, and earnings remain visible in one place.</p>
+                    <strong>@appointments.Count(appointment => appointment.AppointmentDate == today).ToString("D2") appointments scheduled today</strong>
+                    <p class="soft-text mb-0">@PortalFormatting.FormatCurrency(currentMonthRevenue) earned this month and @appointments.Count(appointment => appointment.Status == "Payment Pending").ToString("D2") bookings are waiting for payment.</p>
                 </section>
             </div>
         </aside>
@@ -99,8 +104,8 @@
 
                 <div class="panel-topbar-actions">
                     <div class="panel-context-line">
-                        <span class="panel-context-pill">New navigation system</span>
-                        <span class="panel-context-pill subtle">Doctor dashboard</span>
+                        <span class="panel-context-pill">@appointments.Count(appointment => appointment.AppointmentDate >= today).ToString("D2") active bookings</span>
+                        <span class="panel-context-pill subtle">@PortalFormatting.FormatCurrency(currentMonthRevenue) this month</span>
                     </div>
 
                     <div class="panel-action-row">
