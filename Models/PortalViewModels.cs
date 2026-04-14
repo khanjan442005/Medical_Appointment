@@ -13,6 +13,8 @@ public sealed class AppointmentCardViewModel
     public string Status { get; set; } = string.Empty;
     public string FeeLabel { get; set; } = string.Empty;
     public string PaymentMethod { get; set; } = string.Empty;
+    public string PaymentStatus { get; set; } = string.Empty;
+    public string CreatedAtLabel { get; set; } = string.Empty;
 }
 
 public sealed class NotificationItemViewModel
@@ -187,18 +189,34 @@ public sealed class DoctorDashboardViewModel
     public int TodaysAppointmentsCount { get; set; }
     public int TotalPatientsCount { get; set; }
     public int PendingActionsCount { get; set; }
+    public int UpcomingAppointmentsCount { get; set; }
+    public int CompletedAppointmentsCount { get; set; }
     public string MonthlyEarningsLabel { get; set; } = string.Empty;
+    public string NextAvailabilityLabel { get; set; } = string.Empty;
     public List<AppointmentCardViewModel> UpcomingAppointments { get; set; } = [];
+    public List<DoctorAvailabilitySlot> AvailabilityPreview { get; set; } = [];
 }
 
 public sealed class DoctorAppointmentsViewModel
 {
     public List<AppointmentCardViewModel> Appointments { get; set; } = [];
+    public string SearchTerm { get; set; } = string.Empty;
+    public string StatusFilter { get; set; } = "All";
+    public string PaymentFilter { get; set; } = "All";
+    public int TotalAppointmentsCount { get; set; }
+    public int ConfirmedAppointmentsCount { get; set; }
+    public int CompletedAppointmentsCount { get; set; }
+    public int PendingAppointmentsCount { get; set; }
+    public string RevenueLabel { get; set; } = string.Empty;
 }
 
 public sealed class DoctorAvailabilityViewModel
 {
     public List<DoctorAvailabilitySlot> Slots { get; set; } = [];
+    public int TotalSlotGroupsCount { get; set; }
+    public int ActiveDaysCount { get; set; }
+    public string NextAvailabilityLabel { get; set; } = string.Empty;
+    public List<ReportBreakdownItemViewModel> DayBreakdown { get; set; } = [];
 }
 
 public sealed class DoctorEarningsViewModel
@@ -207,11 +225,21 @@ public sealed class DoctorEarningsViewModel
     public string ThisMonthLabel { get; set; } = string.Empty;
     public string AveragePerVisitLabel { get; set; } = string.Empty;
     public string PendingPayoutLabel { get; set; } = string.Empty;
+    public int PaidAppointmentsCount { get; set; }
+    public int PendingPaymentCount { get; set; }
+    public string RevenueTrendLabel { get; set; } = string.Empty;
+    public List<ReportBreakdownItemViewModel> PaymentMethodBreakdown { get; set; } = [];
+    public List<ReportBreakdownItemViewModel> StatusBreakdown { get; set; } = [];
 }
 
 public sealed class DoctorOwnProfileViewModel
 {
     public DemoDoctor Doctor { get; set; } = new();
+    public int TotalAppointmentsCount { get; set; }
+    public int UpcomingAppointmentsCount { get; set; }
+    public int DistinctPatientsCount { get; set; }
+    public int TotalAvailabilityBlocks { get; set; }
+    public string TotalEarningsLabel { get; set; } = string.Empty;
 }
 
 public sealed class AdminDashboardViewModel
