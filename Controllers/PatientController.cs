@@ -186,7 +186,7 @@ namespace Doctor_Appointment_System.Controllers
                     Title = notification.Title,
                     Message = notification.Message,
                     Label = notification.Label,
-                    TimeLabel = notification.CreatedAt.ToString("dd MMM, hh:mm tt")
+                    TimeLabel = notification.CreatedAt.ToLocalTime().ToString("dd MMM, hh:mm tt")
                 })
                 .ToList();
 
@@ -240,8 +240,13 @@ namespace Doctor_Appointment_System.Controllers
                 return Forbid();
             }
 
-            var patient = _portalService.GetPatient(appointment.PatientId)!;
-            var doctor = _portalService.GetDoctor(appointment.DoctorId)!;
+            var patient = _portalService.GetPatient(appointment.PatientId);
+            var doctor = _portalService.GetDoctor(appointment.DoctorId);
+            if (patient is null || doctor is null)
+            {
+                return RedirectToAction(nameof(AppointmentHistory));
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(new PaymentViewModel

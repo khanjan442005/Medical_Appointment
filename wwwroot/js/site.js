@@ -47,6 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     initializeAuthValidation();
+    initializeBookingFlow();
+    initializePaymentFlow();
 });
 
 function initializeNavToggles() {
@@ -398,4 +400,122 @@ function initializeAuthValidation() {
             }
         });
     });
+}
+
+function initializeBookingFlow() {
+    const bookingForm = document.querySelector("[data-booking-form]");
+    if (!bookingForm) {
+        return;
+    }
+
+    const dateInput = bookingForm.querySelector("[data-booking-date]");
+    const slotChoices = Array.from(bookingForm.querySelectorAll("[data-slot-choice]"));
+    const messageNode = bookingForm.querySelector("[data-booking-slot-message]");
+
+    if (!dateInput || slotChoices.length === 0 || !messageNode) {
+        return;
+    }
+
+    const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    const resetSelection = (choice) => {
+        const input = choice.querySelector("input[type='radio']");
+        if (input) {
+            input.checked = false;
+        }
+    };
+
+    const updateSlots = () => {
+        if (!dateInput.value) {
+            slotChoices.forEach((choice) => {
+                choice.hidden = false;
+            });
+
+            messageNode.textContent = "Pick a date to see which time slots are valid for that day.";
+            return;
+        }
+
+        const selectedDate = new Date(`${dateInput.value}T00:00:00`);
+        const dayLabel = Number.isNaN(selectedDate.getTime()) ? "" : dayLabels[selectedDate.getDay()];
+        let visibleCount = 0;
+
+        slotChoices.forEach((choice) => {
+            const days = (choice.dataset.slotDays ?? "").split("|").filter(Boolean);
+            const isVisible = dayLabel.length > 0 && days.includes(dayLabel);
+            choice.hidden = !isVisible;
+
+            if (!isVisible) {
+                resetSelection(choice);
+                return;
+            }
+
+            visibleCount += 1;
+        });
+
+        if (!dayLabel) {
+            messageNode.textContent = "Choose a valid appointment date.";
+            return;
+        }
+
+        if (visibleCount === 0) {
+            messageNode.textContent = `No slots are available on ${dayLabel}. Choose another date from the doctor's saved schedule.`;
+            return;
+        }
+
+        messageNode.textContent = `${visibleCount} slot(s) available on ${dayLabel}.`;
+    };
+
+    dateInput.addEventListener("change", updateSlots);
+    updateSlots();
+}
+
+function initializePaymentFlow() {
+    const paymentForm = document.querySelector("[data-payment-form]");
+    if (!paymentForm) {
+        return;
+    }
+
+    const methodInputs = Array.from(paymentForm.querySelectorAll("[data-payment-method]"));
+    const cardFields = paymentForm.querySelector("[data-card-fields]");
+    const noteNode = paymentForm.querySelector("[data-payment-note]");
+
+    if (methodInputs.length === 0 || !cardFields || !noteNode) {
+        return;
+    }
+
+    const cardInputs = Array.from(cardFields.querySelectorAll("input"));
+
+    const updatePaymentView = () => {
+        const selectedInput = methodInputs.find((input) => input.checked);
+        const selectedMethod = selectedInput ? selectedInput.value : "";
+        const isCard = selectedMethod === "Card";
+
+        cardFields.hidden = !isCard;
+        cardInputs.forEach((input) => {
+            input.disabled = !isCard;
+        });
+
+        if (selectedMethod === "UPI") {
+            noteNode.textContent = "UPI payments confirm instantly and do not require extra card details.";
+            return;
+        }
+
+        if (selectedMethod === "Net Banking") {
+            noteNode.textContent = "Net banking confirms directly after the payment request is submitted.";
+            return;
+        }
+
+        if (selectedMethod === "Cash at clinic") {
+            noteNode.textContent = "Your booking will be confirmed now, and you can pay at the clinic during the visit.";
+            return;
+        }
+
+        noteNode.textContent = "Enter your card details to confirm the appointment payment.";
+    };
+
+    methodInputs.forEach((input) => {
+        input.addEventListener("change", updatePaymentView);
+    });
+
+    updatePaymentView();
 }
