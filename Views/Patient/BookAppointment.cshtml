@@ -29,18 +29,18 @@
             </div>
         </div>
 
-        <form method="post" class="auth-form-stack">
+        <form method="post" class="auth-form-stack" data-booking-form>
             <input asp-for="Input.DoctorId" type="hidden" />
 
             <div class="detail-grid">
                 <div class="detail-card">
                     <strong>Select date</strong>
-                    <input asp-for="Input.AppointmentDate" type="date" class="form-control mt-3" min="@Model.MinimumDate" />
+                    <input asp-for="Input.AppointmentDate" type="date" class="form-control mt-3" min="@Model.MinimumDate" data-booking-date />
                     <span asp-validation-for="Input.AppointmentDate" class="text-danger small d-block mt-2"></span>
                 </div>
                 <div class="detail-card">
-                    <strong>Consultation summary</strong>
-                    <p class="mb-0">30-minute consultation with digital notes, prescription summary, and live status tracking.</p>
+                    <strong>Booking guidance</strong>
+                    <p class="mb-0">Choose a date first. Only slots that match the doctor's saved weekly schedule stay active.</p>
                 </div>
             </div>
 
@@ -52,13 +52,18 @@
                     </div>
                 </div>
 
-                <div class="slot-grid">
-                    @foreach (var slot in Model.AvailableSlots)
+                <p class="soft-text mb-3" data-booking-slot-message>
+                    Pick a date to see which time slots are valid for that day.
+                </p>
+
+                <div class="slot-grid" data-booking-slot-grid>
+                    @foreach (var slot in Model.SlotOptions)
                     {
-                        var slotId = $"time-slot-{Model.Doctor.Id}-{slot.Replace(" ", string.Empty).Replace(":", string.Empty).ToLowerInvariant()}";
-                        <label class="slot-choice">
-                            <input asp-for="Input.TimeSlot" id="@slotId" type="radio" value="@slot" />
-                            <span class="slot-chip">@slot</span>
+                        var slotId = $"time-slot-{Model.Doctor.Id}-{slot.Value.Replace(" ", string.Empty).Replace(":", string.Empty).ToLowerInvariant()}";
+                        var slotDays = string.Join("|", slot.AvailableDays);
+                        <label class="slot-choice" data-slot-choice data-slot-days="@slotDays">
+                            <input asp-for="Input.TimeSlot" id="@slotId" type="radio" value="@slot.Value" />
+                            <span class="slot-chip">@slot.Value</span>
                         </label>
                     }
                 </div>
@@ -76,7 +81,7 @@
         <div class="section-head">
             <div>
                 <span class="eyebrow">Booking summary</span>
-                <h3>Charges and next step</h3>
+                <h3>Charges and schedule</h3>
             </div>
         </div>
 
@@ -97,6 +102,34 @@
                 <span>Total</span>
                 <strong>@PortalFormatting.FormatCurrency(Model.Doctor.ConsultationFee + 50)</strong>
             </div>
+        </div>
+
+        <div class="timeline-list mt-4">
+            @if (Model.ScheduleItems.Any())
+            {
+                @foreach (var item in Model.ScheduleItems)
+                {
+                    <article class="timeline-item">
+                        <div class="timeline-slot">@item.DayLabel</div>
+                        <div class="timeline-copy">
+                            <strong>@item.SessionLabel</strong>
+                            <span>@item.TimeRange</span>
+                            <small class="soft-text d-block">Slots: @string.Join(", ", item.SlotValues)</small>
+                        </div>
+                        <span class="status-tag">Open</span>
+                    </article>
+                }
+            }
+            else
+            {
+                <article class="timeline-item">
+                    <div class="timeline-copy">
+                        <strong>No schedule available right now.</strong>
+                        <span>Please choose another doctor from the directory.</span>
+                    </div>
+                    <span class="status-tag">Unavailable</span>
+                </article>
+            }
         </div>
 
         <div class="detail-card mt-4">
