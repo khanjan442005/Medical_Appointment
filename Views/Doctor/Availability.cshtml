@@ -13,6 +13,11 @@
         <span class="soft-text">Consultation sessions stored for this doctor.</span>
     </article>
     <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Visible slots</span>
+        <strong>@Model.TotalVisibleSlotsCount.ToString("D2")</strong>
+        <span class="soft-text">Actual patient-facing time slots in the booking flow.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
         <span class="soft-text">Active days</span>
         <strong>@Model.ActiveDaysCount.ToString("D2")</strong>
         <span class="soft-text">Distinct days currently visible in the booking flow.</span>
@@ -21,11 +26,6 @@
         <span class="soft-text">Next availability</span>
         <strong>@Model.NextAvailabilityLabel</strong>
         <span class="soft-text">First saved slot shown from the current doctor schedule.</span>
-    </article>
-    <article class="stat-card glass-surface tilt-card" data-tilt>
-        <span class="soft-text">Mode</span>
-        <strong>Live sync</strong>
-        <span class="soft-text">Patients see this timing data directly in booking.</span>
     </article>
 </section>
 
@@ -91,6 +91,7 @@
                         <div class="timeline-copy">
                             <strong>@slot.SessionLabel</strong>
                             <span>@slot.TimeRange</span>
+                            <small class="soft-text d-block">Slots: @string.Join(", ", slot.SlotValues)</small>
                         </div>
                         <span class="status-tag">Active</span>
                     </article>
