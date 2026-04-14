@@ -21,7 +21,10 @@ namespace Doctor_Appointment_System.Controllers
             var today = DateOnly.FromDateTime(DateTime.Today);
             var appointments = _portalService.GetAppointmentsForDoctor(doctor.Id);
             var slots = _portalService.GetAvailabilitySlots(doctor.Id).ToList();
-            var appointmentCards = BuildAppointmentCards(doctor, appointments);
+            var upcomingAppointments = appointments
+                .Where(appointment => appointment.AppointmentDate >= today)
+                .Take(4)
+                .ToList();
             var monthlyRevenue = appointments
                 .Where(appointment => appointment.PaymentCompleted && appointment.AppointmentDate.Year == today.Year && appointment.AppointmentDate.Month == today.Month)
                 .Sum(appointment => appointment.TotalAmount);
@@ -36,10 +39,7 @@ namespace Doctor_Appointment_System.Controllers
                 CompletedAppointmentsCount = appointments.Count(appointment => appointment.Status == "Completed"),
                 MonthlyEarningsLabel = PortalFormatting.FormatCurrency(monthlyRevenue),
                 NextAvailabilityLabel = slots.Count == 0 ? "No schedule saved" : $"{slots[0].DayLabel} • {slots[0].TimeRange}",
-                UpcomingAppointments = appointmentCards
-                    .Where(appointment => appointments.First(item => item.Id == appointment.Id).AppointmentDate >= today)
-                    .Take(4)
-                    .ToList(),
+                UpcomingAppointments = BuildAppointmentCards(doctor, upcomingAppointments),
                 AvailabilityPreview = slots.Take(3).ToList()
             };
 
@@ -76,8 +76,7 @@ namespace Doctor_Appointment_System.Controllers
             model.ConfirmedAppointmentsCount = model.Appointments.Count(appointment => appointment.Status == "Confirmed");
             model.CompletedAppointmentsCount = model.Appointments.Count(appointment => appointment.Status == "Completed");
             model.PendingAppointmentsCount = model.Appointments.Count(appointment => appointment.Status == "Payment Pending");
-            model.RevenueLabel = PortalFormatting.FormatCurrency(
-                model.Appointments.Sum(appointment => ParseCurrency(appointment.FeeLabel)));
+            model.RevenueLabel = PortalFormatting.FormatCurrency(model.Appointments.Sum(appointment => appointment.TotalAmount));
 
             return View(model);
         }
@@ -224,6 +223,7 @@ namespace Doctor_Appointment_System.Controllers
                         DateLabel = PortalFormatting.FormatDate(appointment.AppointmentDate),
                         TimeSlot = appointment.TimeSlot,
                         Status = appointment.Status,
+                        TotalAmount = appointment.TotalAmount,
                         FeeLabel = PortalFormatting.FormatCurrency(appointment.TotalAmount),
                         PaymentMethod = string.IsNullOrWhiteSpace(appointment.PaymentMethod) ? "Pending" : appointment.PaymentMethod,
                         PaymentStatus = appointment.PaymentCompleted ? "Paid" : "Pending",
@@ -247,11 +247,5 @@ namespace Doctor_Appointment_System.Controllers
             string.IsNullOrWhiteSpace(filter)
             || string.Equals(filter, "All", StringComparison.OrdinalIgnoreCase)
             || string.Equals(value, filter, StringComparison.OrdinalIgnoreCase);
-
-        private static decimal ParseCurrency(string value)
-        {
-            var normalized = value.Replace("INR", string.Empty, StringComparison.OrdinalIgnoreCase).Replace(",", string.Empty).Trim();
-            return decimal.TryParse(normalized, out var amount) ? amount : 0m;
-        }
     }
 }
