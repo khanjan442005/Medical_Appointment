@@ -23,7 +23,7 @@
         <span class="soft-text">Consultations already completed.</span>
     </article>
     <article class="stat-card glass-surface tilt-card" data-tilt>
-        <span class="soft-text">Visible revenue</span>
+        <span class="soft-text">Realized revenue</span>
         <strong>@Model.RevenueLabel</strong>
         <span class="soft-text">@Model.PendingAppointmentsCount.ToString("D2") bookings still await payment.</span>
     </article>
@@ -75,6 +75,7 @@
                     <th>Payment</th>
                     <th>Fee</th>
                     <th>Created</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -95,13 +96,27 @@
                             </td>
                             <td>@appointment.FeeLabel</td>
                             <td>@appointment.CreatedAtLabel</td>
+                            <td>
+                                @if (appointment.CanContinuePayment)
+                                {
+                                    <span class="soft-text">Waiting for patient payment</span>
+                                }
+                                else if (appointment.Status == "Completed")
+                                {
+                                    <span class="soft-text">Visit closed</span>
+                                }
+                                else
+                                {
+                                    <span class="soft-text">Schedule ready</span>
+                                }
+                            </td>
                         </tr>
                     }
                 }
                 else
                 {
                     <tr>
-                        <td colspan="6" class="text-center py-4">No appointments matched the selected filters.</td>
+                        <td colspan="7" class="text-center py-4">No appointments matched the selected filters.</td>
                     </tr>
                 }
             </tbody>
