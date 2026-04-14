@@ -6,12 +6,35 @@
     Layout = "~/Views/Doctor/_DoctorLayout.cshtml";
 }
 
+<section class="stats-grid">
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Saved blocks</span>
+        <strong>@Model.TotalSlotGroupsCount.ToString("D2")</strong>
+        <span class="soft-text">Consultation sessions stored for this doctor.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Active days</span>
+        <strong>@Model.ActiveDaysCount.ToString("D2")</strong>
+        <span class="soft-text">Distinct days currently visible in the booking flow.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Next availability</span>
+        <strong>@Model.NextAvailabilityLabel</strong>
+        <span class="soft-text">First saved slot shown from the current doctor schedule.</span>
+    </article>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Mode</span>
+        <strong>Live sync</strong>
+        <span class="soft-text">Patients see this timing data directly in booking.</span>
+    </article>
+</section>
+
 <section class="dual-grid">
     <article class="section-card glass-surface">
         <div class="section-head">
             <div>
                 <span class="eyebrow">Availability</span>
-                <h3>Manage schedule</h3>
+                <h3>Schedule overview</h3>
             </div>
         </div>
 
@@ -22,8 +45,31 @@
             </div>
             <div class="detail-card">
                 <strong>Current mode</strong>
-                <span class="soft-text">The schedule is currently read-only in demo mode, but it remains fully connected to patient bookings.</span>
+                <span class="soft-text">The schedule remains read-only in demo mode, but it is fully connected to patient bookings.</span>
             </div>
+        </div>
+
+        <div class="summary-list mt-4">
+            @if (Model.DayBreakdown.Any())
+            {
+                @foreach (var item in Model.DayBreakdown)
+                {
+                    <div class="summary-row">
+                        <span>
+                            <strong>@item.Label</strong>
+                            <small class="d-block">@item.Detail</small>
+                        </span>
+                        <strong>@item.ValueLabel</strong>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="summary-row">
+                    <span>No availability blocks saved.</span>
+                    <strong>00</strong>
+                </div>
+            }
         </div>
     </article>
 
@@ -36,15 +82,28 @@
         </div>
 
         <div class="timeline-list">
-            @foreach (var slot in Model.Slots)
+            @if (Model.Slots.Any())
+            {
+                @foreach (var slot in Model.Slots)
+                {
+                    <article class="timeline-item">
+                        <div class="timeline-slot">@slot.DayLabel</div>
+                        <div class="timeline-copy">
+                            <strong>@slot.SessionLabel</strong>
+                            <span>@slot.TimeRange</span>
+                        </div>
+                        <span class="status-tag">Active</span>
+                    </article>
+                }
+            }
+            else
             {
                 <article class="timeline-item">
-                    <div class="timeline-slot">@slot.DayLabel</div>
                     <div class="timeline-copy">
-                        <strong>@slot.SessionLabel</strong>
-                        <span>@slot.TimeRange</span>
+                        <strong>No schedule is available yet.</strong>
+                        <span>Saved consultation sessions will appear here when availability is configured.</span>
                     </div>
-                    <span class="status-tag">Active</span>
+                    <span class="status-tag">Empty</span>
                 </article>
             }
         </div>
