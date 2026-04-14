@@ -20,7 +20,7 @@
             <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
         }
 
-        <form method="post" class="auth-form-stack">
+        <form method="post" class="auth-form-stack" data-payment-form>
             <input asp-for="Input.AppointmentId" type="hidden" />
 
             <div class="payment-options">
@@ -28,7 +28,7 @@
                 {
                     var methodId = $"payment-method-{method.Replace(" ", string.Empty).ToLowerInvariant()}";
                     <label class="payment-option">
-                        <input asp-for="Input.PaymentMethod" id="@methodId" type="radio" value="@method" />
+                        <input asp-for="Input.PaymentMethod" id="@methodId" type="radio" value="@method" data-payment-method />
                         <span>
                             @method
                             <small>
@@ -46,7 +46,14 @@
             </div>
             <span asp-validation-for="Input.PaymentMethod" class="text-danger small d-block mt-2"></span>
 
-            <div class="detail-grid mt-4">
+            <div class="detail-card mt-4">
+                <strong>Payment note</strong>
+                <span class="soft-text" data-payment-note>
+                    UPI and bank payments confirm instantly. Card details are only needed when you choose card payment.
+                </span>
+            </div>
+
+            <div class="detail-grid mt-4" data-card-fields>
                 <div class="detail-card">
                     <strong>Card number</strong>
                     <input asp-for="Input.CardNumber" class="form-control mt-3" placeholder="1234 5678 9012 3456" />

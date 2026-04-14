@@ -12,34 +12,61 @@
             <span class="eyebrow">Visit history</span>
             <h3>Appointments</h3>
         </div>
+        <a class="btn-surface" asp-action="FindDoctor">Book another visit</a>
     </div>
 
-    <div class="table-theme glass-surface">
-        <table class="table align-middle">
-            <thead>
-                <tr>
-                    <th>Doctor</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Status</th>
-                    <th>Fee</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var appointment in Model.Appointments)
-                {
+    @if (Model.Appointments.Any())
+    {
+        <div class="table-theme glass-surface">
+            <table class="table align-middle">
+                <thead>
                     <tr>
-                        <td>
-                            <strong>@appointment.DoctorName</strong>
-                            <div class="soft-text">@appointment.DoctorSpecialization</div>
-                        </td>
-                        <td>@appointment.DateLabel</td>
-                        <td>@appointment.TimeSlot</td>
-                        <td><span class="status-tag">@appointment.Status</span></td>
-                        <td>@appointment.FeeLabel</td>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                        <th>Booked on</th>
+                        <th>Action</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var appointment in Model.Appointments)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@appointment.DoctorName</strong>
+                                <div class="soft-text">@appointment.DoctorSpecialization</div>
+                                <div class="soft-text">@appointment.TimeSlot</div>
+                            </td>
+                            <td>@appointment.DateLabel</td>
+                            <td><span class="status-tag">@appointment.Status</span></td>
+                            <td>
+                                <strong>@appointment.PaymentStatus</strong>
+                                <div class="soft-text">@appointment.PaymentMethod</div>
+                                <div class="soft-text">@appointment.FeeLabel</div>
+                            </td>
+                            <td>@appointment.CreatedAtLabel</td>
+                            <td>
+                                @if (appointment.CanContinuePayment)
+                                {
+                                    <a class="btn-brand-outline" asp-action="Payment" asp-route-appointmentId="@appointment.Id">Resume payment</a>
+                                }
+                                else
+                                {
+                                    <span class="soft-text">No action needed</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="detail-card">
+            <strong>No appointments yet.</strong>
+            <span class="soft-text">Find a verified doctor and create your first booking from the patient panel.</span>
+        </div>
+    }
 </section>
