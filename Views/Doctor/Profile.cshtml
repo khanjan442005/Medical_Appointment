@@ -16,43 +16,99 @@
     </div>
 </section>
 
-<section class="detail-grid">
-    <article class="detail-card">
-        <strong>Email</strong>
-        <span class="soft-text">@Model.Doctor.Email</span>
+<section class="stats-grid">
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Appointments</span>
+        <strong>@Model.TotalAppointmentsCount.ToString("D2")</strong>
+        <span class="soft-text">Total bookings linked to this doctor account.</span>
     </article>
-    <article class="detail-card">
-        <strong>Experience</strong>
-        <span class="soft-text">@Model.Doctor.ExperienceYears years</span>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Upcoming</span>
+        <strong>@Model.UpcomingAppointmentsCount.ToString("D2")</strong>
+        <span class="soft-text">Future consultations still on the schedule.</span>
     </article>
-    <article class="detail-card">
-        <strong>Hospital</strong>
-        <span class="soft-text">@Model.Doctor.HospitalName</span>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Distinct patients</span>
+        <strong>@Model.DistinctPatientsCount.ToString("D2")</strong>
+        <span class="soft-text">Unique patients already served from this profile.</span>
     </article>
-    <article class="detail-card">
-        <strong>Specialization</strong>
-        <span class="soft-text">@Model.Doctor.Specialization</span>
-    </article>
-    <article class="detail-card">
-        <strong>Location</strong>
-        <span class="soft-text">@Model.Doctor.City</span>
-    </article>
-    <article class="detail-card">
-        <strong>Languages</strong>
-        <span class="soft-text">@Model.Doctor.Languages</span>
+    <article class="stat-card glass-surface tilt-card" data-tilt>
+        <span class="soft-text">Lifetime earnings</span>
+        <strong>@Model.TotalEarningsLabel</strong>
+        <span class="soft-text">Paid consultation total tied to this doctor.</span>
     </article>
 </section>
 
-<section class="section-card glass-surface">
-    <div class="section-head">
-        <div>
-            <span class="eyebrow">Actions</span>
-            <h3>Profile management</h3>
+<section class="dual-grid">
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Professional details</span>
+                <h3>Directory information</h3>
+            </div>
         </div>
-    </div>
 
-    <div class="detail-card">
-        <strong>Directory visibility</strong>
-        <span class="soft-text">This profile is visible in the patient doctor directory, and new bookings will appear here automatically.</span>
-    </div>
+        <div class="detail-grid">
+            <article class="detail-card">
+                <strong>Email</strong>
+                <span class="soft-text">@Model.Doctor.Email</span>
+            </article>
+            <article class="detail-card">
+                <strong>Experience</strong>
+                <span class="soft-text">@Model.Doctor.ExperienceYears years</span>
+            </article>
+            <article class="detail-card">
+                <strong>Hospital</strong>
+                <span class="soft-text">@Model.Doctor.HospitalName</span>
+            </article>
+            <article class="detail-card">
+                <strong>Specialization</strong>
+                <span class="soft-text">@Model.Doctor.Specialization</span>
+            </article>
+            <article class="detail-card">
+                <strong>Location</strong>
+                <span class="soft-text">@Model.Doctor.City</span>
+            </article>
+            <article class="detail-card">
+                <strong>Languages</strong>
+                <span class="soft-text">@Model.Doctor.Languages</span>
+            </article>
+            <article class="detail-card">
+                <strong>Consultation fee</strong>
+                <span class="soft-text">@PortalFormatting.FormatCurrency(Model.Doctor.ConsultationFee)</span>
+            </article>
+            <article class="detail-card">
+                <strong>License number</strong>
+                <span class="soft-text">@Model.Doctor.LicenseNumber</span>
+            </article>
+        </div>
+    </article>
+
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Profile management</span>
+                <h3>Live directory identity</h3>
+            </div>
+        </div>
+
+        <div class="summary-list">
+            <div class="summary-row">
+                <span>Directory visibility</span>
+                <strong>Visible to patients</strong>
+            </div>
+            <div class="summary-row">
+                <span>Availability blocks</span>
+                <strong>@Model.TotalAvailabilityBlocks.ToString("D2") active blocks</strong>
+            </div>
+            <div class="summary-row">
+                <span>Profile rating</span>
+                <strong>@Model.Doctor.Rating.ToString("0.0") / 5</strong>
+            </div>
+            <div class="summary-row">
+                <span>Bio</span>
+                <strong>@Model.Doctor.Bio</strong>
+            </div>
+        </div>
+    </article>
 </section>
