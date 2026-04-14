@@ -1,4 +1,5 @@
 using System.IO;
+using Microsoft.AspNetCore.Authentication;
 using Doctor_Appointment_System.Data;
 using Doctor_Appointment_System.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -50,6 +51,11 @@ builder.Services
         options.AccessDeniedPath = "/Auth/AccessDenied";
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
         options.SlidingExpiration = true;
+        options.Events = new CookieAuthenticationEvents
+        {
+            OnRedirectToLogin = context => HandleApiAuthRedirectAsync(context, StatusCodes.Status401Unauthorized),
+            OnRedirectToAccessDenied = context => HandleApiAuthRedirectAsync(context, StatusCodes.Status403Forbidden)
+        };
     });
 builder.Services.AddAuthorization();
 
@@ -81,3 +87,15 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+static Task HandleApiAuthRedirectAsync(RedirectContext<CookieAuthenticationOptions> context, int statusCode)
+{
+    if (context.Request.Path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase))
+    {
+        context.Response.StatusCode = statusCode;
+        return Task.CompletedTask;
+    }
+
+    context.Response.Redirect(context.RedirectUri);
+    return Task.CompletedTask;
+}
