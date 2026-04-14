@@ -25,22 +25,96 @@
     <article class="stat-card glass-surface tilt-card" data-tilt>
         <span class="soft-text">Pending payout</span>
         <strong>@Model.PendingPayoutLabel</strong>
-        <span class="soft-text">Bookings waiting on payment completion.</span>
+        <span class="soft-text">@Model.PendingPaymentCount.ToString("D2") bookings waiting on payment completion.</span>
+    </article>
+</section>
+
+<section class="dual-grid">
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Revenue</span>
+                <h3>Earnings overview</h3>
+            </div>
+        </div>
+
+        <div class="summary-list">
+            <div class="summary-row">
+                <span>Paid appointments</span>
+                <strong>@Model.PaidAppointmentsCount.ToString("D2")</strong>
+            </div>
+            <div class="summary-row">
+                <span>Payment pending appointments</span>
+                <strong>@Model.PendingPaymentCount.ToString("D2")</strong>
+            </div>
+            <div class="summary-row">
+                <span>Month-over-month trend</span>
+                <strong>@Model.RevenueTrendLabel</strong>
+            </div>
+        </div>
+    </article>
+
+    <article class="section-card glass-surface">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Payment methods</span>
+                <h3>Collected payment mix</h3>
+            </div>
+        </div>
+
+        <div class="summary-list">
+            @if (Model.PaymentMethodBreakdown.Any())
+            {
+                @foreach (var item in Model.PaymentMethodBreakdown)
+                {
+                    <div class="summary-row">
+                        <span>
+                            <strong>@item.Label</strong>
+                            <small class="d-block">@item.Detail</small>
+                        </span>
+                        <strong>@item.ValueLabel</strong>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="summary-row">
+                    <span>No paid appointment data available.</span>
+                    <strong>00</strong>
+                </div>
+            }
+        </div>
     </article>
 </section>
 
 <section class="section-card glass-surface">
     <div class="section-head">
         <div>
-            <span class="eyebrow">Trend</span>
-            <h3>Earnings overview</h3>
+            <span class="eyebrow">Appointment states</span>
+            <h3>Booking status value</h3>
         </div>
     </div>
 
-    <div class="chart-placeholder">
-        <div class="text-center">
-            <strong>Revenue feed connected</strong>
-            <p class="soft-text mb-0">Patient payment confirmations update the doctor earnings cards directly.</p>
-        </div>
+    <div class="summary-list">
+        @if (Model.StatusBreakdown.Any())
+        {
+            @foreach (var item in Model.StatusBreakdown)
+            {
+                <div class="summary-row">
+                    <span>
+                        <strong>@item.Label</strong>
+                        <small class="d-block">@item.Detail</small>
+                    </span>
+                    <strong>@item.ValueLabel</strong>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="summary-row">
+                <span>No appointment status data available.</span>
+                <strong>00</strong>
+            </div>
+        }
     </div>
 </section>
