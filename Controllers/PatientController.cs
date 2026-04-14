@@ -20,6 +20,7 @@ namespace Doctor_Appointment_System.Controllers
             var patient = _portalService.GetCurrentPatient();
             var today = DateOnly.FromDateTime(DateTime.Today);
             var appointments = _portalService.GetAppointmentsForPatient(patient.Id);
+            var notifications = _portalService.GetNotificationsForPatient(patient.Id);
             var upcomingAppointments = appointments
                 .Where(appointment => appointment.AppointmentDate >= today)
                 .OrderBy(appointment => appointment.AppointmentDate)
@@ -32,9 +33,10 @@ namespace Doctor_Appointment_System.Controllers
                 UpcomingAppointmentsCount = upcomingAppointments.Count,
                 TotalVisitsCount = appointments.Count,
                 SavedDoctorsCount = _portalService.GetVerifiedDoctors().Count,
-                MedicalRecordsCount = Math.Max(appointments.Count(appointment => appointment.Status == "Completed") + 4, 4),
+                PendingPaymentsCount = appointments.Count(appointment => !appointment.PaymentCompleted),
                 UpcomingAppointments = upcomingAppointments.Take(3).Select(MapAppointmentCard).ToList(),
-                FeaturedDoctors = _portalService.GetVerifiedDoctors().Take(2).ToList()
+                FeaturedDoctors = _portalService.GetVerifiedDoctors().Take(2).ToList(),
+                RecentNotifications = notifications.Take(3).Select(MapNotificationItem).ToList()
             };
 
             return View(model);
@@ -85,7 +87,7 @@ namespace Doctor_Appointment_System.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult BookAppointment(BookAppointmentInputModel input)
+        public IActionResult BookAppointment([Bind(Prefix = "Input")] BookAppointmentInputModel input)
         {
             var doctor = _portalService.GetDoctor(input.DoctorId);
             if (doctor is null)
@@ -224,7 +226,7 @@ namespace Doctor_Appointment_System.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Payment(PaymentInputModel input)
+        public IActionResult Payment([Bind(Prefix = "Input")] PaymentInputModel input)
         {
             var currentPatient = _portalService.GetCurrentPatient();
             var appointment = _portalService.GetAppointment(input.AppointmentId);
@@ -312,32 +314,84 @@ namespace Doctor_Appointment_System.Controllers
 
         private BookAppointmentViewModel BuildBookingViewModel(DemoDoctor doctor, BookAppointmentInputModel? input)
         {
+            var availability = _portalService.GetAvailabilitySlots(doctor.Id)
+                .OrderBy(slot => GetDaySortOrder(slot.DayLabel))
+                .ThenBy(slot => slot.TimeRange)
+                .ToList();
+
             return new BookAppointmentViewModel
             {
                 Doctor = doctor,
                 Input = input ?? new BookAppointmentInputModel { DoctorId = doctor.Id },
                 AvailableSlots = doctor.AvailableSlots.ToList(),
+                SlotOptions = availability
+                    .SelectMany(slot => slot.SlotValues.Select(slotValue => new { slotValue, slot.DayLabel }))
+                    .GroupBy(item => item.slotValue, StringComparer.OrdinalIgnoreCase)
+                    .Select(group => new BookingSlotOptionViewModel
+                    {
+                        Value = group.First().slotValue,
+                        AvailableDays = group
+                            .Select(item => item.DayLabel)
+                            .Distinct(StringComparer.OrdinalIgnoreCase)
+                            .OrderBy(GetDaySortOrder)
+                            .ToList()
+                    })
+                    .ToList(),
+                ScheduleItems = availability
+                    .Select(slot => new BookingScheduleItemViewModel
+                    {
+                        DayLabel = slot.DayLabel,
+                        SessionLabel = slot.SessionLabel,
+                        TimeRange = slot.TimeRange,
+                        SlotValues = slot.SlotValues
+                    })
+                    .ToList(),
                 MinimumDate = DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd")
             };
         }
 
         private AppointmentCardViewModel MapAppointmentCard(DemoAppointment appointment)
         {
-            var doctor = _portalService.GetDoctor(appointment.DoctorId)!;
-            var patient = _portalService.GetPatient(appointment.PatientId)!;
+            var doctor = _portalService.GetDoctor(appointment.DoctorId);
+            var patient = _portalService.GetPatient(appointment.PatientId);
 
             return new AppointmentCardViewModel
             {
                 Id = appointment.Id,
-                DoctorName = doctor.FullName,
-                DoctorSpecialization = doctor.Specialization,
-                PatientName = patient.FullName,
+                DoctorName = doctor?.FullName ?? "Doctor unavailable",
+                DoctorSpecialization = doctor?.Specialization ?? "Unavailable",
+                PatientName = patient?.FullName ?? "Patient",
                 DateLabel = PortalFormatting.FormatDate(appointment.AppointmentDate),
                 TimeSlot = appointment.TimeSlot,
                 Status = appointment.Status,
                 FeeLabel = PortalFormatting.FormatCurrency(appointment.TotalAmount),
-                PaymentMethod = string.IsNullOrWhiteSpace(appointment.PaymentMethod) ? "Pending" : appointment.PaymentMethod
+                PaymentMethod = string.IsNullOrWhiteSpace(appointment.PaymentMethod) ? "Pending" : appointment.PaymentMethod,
+                PaymentStatus = appointment.PaymentCompleted ? "Paid" : "Pending",
+                CreatedAtLabel = appointment.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt"),
+                CanContinuePayment = !appointment.PaymentCompleted && string.Equals(appointment.Status, "Payment Pending", StringComparison.OrdinalIgnoreCase)
             };
         }
+
+        private NotificationItemViewModel MapNotificationItem(DemoNotification notification) =>
+            new()
+            {
+                IndexLabel = notification.Id.ToString("D2"),
+                Title = notification.Title,
+                Message = notification.Message,
+                Label = notification.Label,
+                TimeLabel = notification.CreatedAt.ToLocalTime().ToString("dd MMM, hh:mm tt")
+            };
+
+        private static int GetDaySortOrder(string dayLabel) => dayLabel switch
+        {
+            "Mon" => 1,
+            "Tue" => 2,
+            "Wed" => 3,
+            "Thu" => 4,
+            "Fri" => 5,
+            "Sat" => 6,
+            "Sun" => 7,
+            _ => 8
+        };
     }
 }
