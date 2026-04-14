@@ -20,13 +20,27 @@ namespace Doctor_Appointment_System.Controllers
             var doctor = _portalService.GetCurrentDoctor();
             var today = DateOnly.FromDateTime(DateTime.Today);
             var appointments = _portalService.GetAppointmentsForDoctor(doctor.Id);
-            var slots = _portalService.GetAvailabilitySlots(doctor.Id).ToList();
+            var slots = _portalService.GetAvailabilitySlots(doctor.Id)
+                .OrderBy(slot => GetDaySortOrder(slot.DayLabel))
+                .ThenBy(slot => slot.TimeRange)
+                .ToList();
+            var todayAppointments = appointments
+                .Where(appointment => appointment.AppointmentDate == today)
+                .Take(3)
+                .ToList();
+            var pendingPaymentAppointments = appointments
+                .Where(appointment => !appointment.PaymentCompleted && appointment.AppointmentDate >= today)
+                .Take(3)
+                .ToList();
             var upcomingAppointments = appointments
                 .Where(appointment => appointment.AppointmentDate >= today)
                 .Take(4)
                 .ToList();
             var monthlyRevenue = appointments
                 .Where(appointment => appointment.PaymentCompleted && appointment.AppointmentDate.Year == today.Year && appointment.AppointmentDate.Month == today.Month)
+                .Sum(appointment => appointment.TotalAmount);
+            var pendingRevenue = appointments
+                .Where(appointment => !appointment.PaymentCompleted)
                 .Sum(appointment => appointment.TotalAmount);
 
             var model = new DoctorDashboardViewModel
@@ -38,8 +52,11 @@ namespace Doctor_Appointment_System.Controllers
                 UpcomingAppointmentsCount = appointments.Count(appointment => appointment.AppointmentDate >= today),
                 CompletedAppointmentsCount = appointments.Count(appointment => appointment.Status == "Completed"),
                 MonthlyEarningsLabel = PortalFormatting.FormatCurrency(monthlyRevenue),
-                NextAvailabilityLabel = slots.Count == 0 ? "No schedule saved" : $"{slots[0].DayLabel} • {slots[0].TimeRange}",
+                PendingRevenueLabel = PortalFormatting.FormatCurrency(pendingRevenue),
+                NextAvailabilityLabel = slots.Count == 0 ? "No schedule saved" : $"{slots[0].DayLabel} - {slots[0].TimeRange}",
                 UpcomingAppointments = BuildAppointmentCards(doctor, upcomingAppointments),
+                TodayAppointments = BuildAppointmentCards(doctor, todayAppointments),
+                PendingPaymentAppointments = BuildAppointmentCards(doctor, pendingPaymentAppointments),
                 AvailabilityPreview = slots.Take(3).ToList()
             };
 
@@ -76,7 +93,9 @@ namespace Doctor_Appointment_System.Controllers
             model.ConfirmedAppointmentsCount = model.Appointments.Count(appointment => appointment.Status == "Confirmed");
             model.CompletedAppointmentsCount = model.Appointments.Count(appointment => appointment.Status == "Completed");
             model.PendingAppointmentsCount = model.Appointments.Count(appointment => appointment.Status == "Payment Pending");
-            model.RevenueLabel = PortalFormatting.FormatCurrency(model.Appointments.Sum(appointment => appointment.TotalAmount));
+            model.RevenueLabel = PortalFormatting.FormatCurrency(model.Appointments
+                .Where(appointment => string.Equals(appointment.PaymentStatus, "Paid", StringComparison.OrdinalIgnoreCase))
+                .Sum(appointment => appointment.TotalAmount));
 
             return View(model);
         }
@@ -85,7 +104,10 @@ namespace Doctor_Appointment_System.Controllers
         {
             var doctor = _portalService.GetCurrentDoctor();
             var appointments = _portalService.GetAppointmentsForDoctor(doctor.Id);
-            var slots = _portalService.GetAvailabilitySlots(doctor.Id);
+            var slots = _portalService.GetAvailabilitySlots(doctor.Id)
+                .OrderBy(slot => GetDaySortOrder(slot.DayLabel))
+                .ThenBy(slot => slot.TimeRange)
+                .ToList();
 
             return View(new DoctorOwnProfileViewModel
             {
@@ -94,28 +116,39 @@ namespace Doctor_Appointment_System.Controllers
                 UpcomingAppointmentsCount = appointments.Count(appointment => appointment.AppointmentDate >= DateOnly.FromDateTime(DateTime.Today)),
                 DistinctPatientsCount = appointments.Select(appointment => appointment.PatientId).Distinct().Count(),
                 TotalAvailabilityBlocks = slots.Count,
-                TotalEarningsLabel = PortalFormatting.FormatCurrency(appointments.Where(appointment => appointment.PaymentCompleted).Sum(appointment => appointment.TotalAmount))
+                TotalEarningsLabel = PortalFormatting.FormatCurrency(appointments.Where(appointment => appointment.PaymentCompleted).Sum(appointment => appointment.TotalAmount)),
+                AvailabilityPreview = slots.Take(3).ToList(),
+                RecentAppointments = BuildAppointmentCards(doctor, appointments
+                    .OrderByDescending(appointment => appointment.AppointmentDate)
+                    .ThenByDescending(appointment => appointment.CreatedAt)
+                    .Take(3)
+                    .ToList())
             });
         }
 
         public IActionResult Availability()
         {
             var doctor = _portalService.GetCurrentDoctor();
-            var slots = _portalService.GetAvailabilitySlots(doctor.Id).ToList();
+            var slots = _portalService.GetAvailabilitySlots(doctor.Id)
+                .OrderBy(slot => GetDaySortOrder(slot.DayLabel))
+                .ThenBy(slot => slot.TimeRange)
+                .ToList();
+
             return View(new DoctorAvailabilityViewModel
             {
                 Slots = slots,
                 TotalSlotGroupsCount = slots.Count,
+                TotalVisibleSlotsCount = slots.Sum(slot => slot.SlotValues.Count),
                 ActiveDaysCount = slots.Select(slot => slot.DayLabel).Distinct(StringComparer.OrdinalIgnoreCase).Count(),
-                NextAvailabilityLabel = slots.Count == 0 ? "No schedule saved" : $"{slots[0].DayLabel} • {slots[0].TimeRange}",
+                NextAvailabilityLabel = slots.Count == 0 ? "No schedule saved" : $"{slots[0].DayLabel} - {slots[0].TimeRange}",
                 DayBreakdown = slots
                     .GroupBy(slot => slot.DayLabel)
-                    .OrderBy(group => group.Key)
+                    .OrderBy(group => GetDaySortOrder(group.Key))
                     .Select(group => new ReportBreakdownItemViewModel
                     {
                         Label = group.Key,
-                        ValueLabel = group.Count().ToString("D2"),
-                        Detail = string.Join(", ", group.Select(item => item.SessionLabel))
+                        ValueLabel = group.Sum(item => item.SlotValues.Count).ToString("D2"),
+                        Detail = string.Join(" / ", group.Select(item => $"{item.SessionLabel}: {string.Join(", ", item.SlotValues)}"))
                     })
                     .ToList()
             });
@@ -227,11 +260,24 @@ namespace Doctor_Appointment_System.Controllers
                         FeeLabel = PortalFormatting.FormatCurrency(appointment.TotalAmount),
                         PaymentMethod = string.IsNullOrWhiteSpace(appointment.PaymentMethod) ? "Pending" : appointment.PaymentMethod,
                         PaymentStatus = appointment.PaymentCompleted ? "Paid" : "Pending",
-                        CreatedAtLabel = appointment.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
+                        CreatedAtLabel = appointment.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt"),
+                        CanContinuePayment = !appointment.PaymentCompleted && string.Equals(appointment.Status, "Payment Pending", StringComparison.OrdinalIgnoreCase)
                     };
                 })
                 .ToList();
         }
+
+        private static int GetDaySortOrder(string dayLabel) => dayLabel switch
+        {
+            "Mon" => 1,
+            "Tue" => 2,
+            "Wed" => 3,
+            "Thu" => 4,
+            "Fri" => 5,
+            "Sat" => 6,
+            "Sun" => 7,
+            _ => 8
+        };
 
         private static bool MatchesSearch(string searchTerm, params string?[] fields)
         {
