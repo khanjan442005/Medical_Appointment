@@ -11,6 +11,7 @@ public sealed class AppointmentCardViewModel
     public string DateLabel { get; set; } = string.Empty;
     public string TimeSlot { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
+    public decimal TotalAmount { get; set; }
     public string FeeLabel { get; set; } = string.Empty;
     public string PaymentMethod { get; set; } = string.Empty;
     public string PaymentStatus { get; set; } = string.Empty;
