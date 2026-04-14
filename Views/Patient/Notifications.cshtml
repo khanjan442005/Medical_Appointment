@@ -14,17 +14,28 @@
         </div>
     </div>
 
-    <div class="timeline-list">
-        @foreach (var notification in Model.Notifications)
-        {
-            <article class="timeline-item">
-                <div class="icon-stat">@notification.IndexLabel</div>
-                <div class="timeline-copy">
-                    <strong>@notification.Title</strong>
-                    <span>@notification.Message</span>
-                </div>
-                <span class="status-tag">@notification.Label</span>
-            </article>
-        }
-    </div>
+    @if (Model.Notifications.Any())
+    {
+        <div class="timeline-list">
+            @foreach (var notification in Model.Notifications)
+            {
+                <article class="timeline-item">
+                    <div class="icon-stat">@notification.IndexLabel</div>
+                    <div class="timeline-copy">
+                        <strong>@notification.Title</strong>
+                        <span>@notification.Message</span>
+                        <small class="soft-text d-block">@notification.TimeLabel</small>
+                    </div>
+                    <span class="status-tag">@notification.Label</span>
+                </article>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="detail-card">
+            <strong>No new notifications.</strong>
+            <span class="soft-text">Booking, payment, and reminder alerts will appear here automatically.</span>
+        </div>
+    }
 </section>
