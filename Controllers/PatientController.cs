@@ -211,6 +211,11 @@ namespace Doctor_Appointment_System.Controllers
                 return Forbid();
             }
 
+            if (appointment.PaymentCompleted)
+            {
+                return RedirectToAction(nameof(BookingConfirm), new { appointmentId = appointment.Id });
+            }
+
             return View(new PaymentViewModel
             {
                 Appointment = appointment,
@@ -238,6 +243,11 @@ namespace Doctor_Appointment_System.Controllers
             if (appointment.PatientId != currentPatient.Id)
             {
                 return Forbid();
+            }
+
+            if (appointment.PaymentCompleted)
+            {
+                return RedirectToAction(nameof(BookingConfirm), new { appointmentId = appointment.Id });
             }
 
             var patient = _portalService.GetPatient(appointment.PatientId);
