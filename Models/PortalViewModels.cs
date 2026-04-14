@@ -211,8 +211,11 @@ public sealed class DoctorDashboardViewModel
     public int UpcomingAppointmentsCount { get; set; }
     public int CompletedAppointmentsCount { get; set; }
     public string MonthlyEarningsLabel { get; set; } = string.Empty;
+    public string PendingRevenueLabel { get; set; } = string.Empty;
     public string NextAvailabilityLabel { get; set; } = string.Empty;
     public List<AppointmentCardViewModel> UpcomingAppointments { get; set; } = [];
+    public List<AppointmentCardViewModel> TodayAppointments { get; set; } = [];
+    public List<AppointmentCardViewModel> PendingPaymentAppointments { get; set; } = [];
     public List<DoctorAvailabilitySlot> AvailabilityPreview { get; set; } = [];
 }
 
@@ -233,6 +236,7 @@ public sealed class DoctorAvailabilityViewModel
 {
     public List<DoctorAvailabilitySlot> Slots { get; set; } = [];
     public int TotalSlotGroupsCount { get; set; }
+    public int TotalVisibleSlotsCount { get; set; }
     public int ActiveDaysCount { get; set; }
     public string NextAvailabilityLabel { get; set; } = string.Empty;
     public List<ReportBreakdownItemViewModel> DayBreakdown { get; set; } = [];
@@ -259,6 +263,8 @@ public sealed class DoctorOwnProfileViewModel
     public int DistinctPatientsCount { get; set; }
     public int TotalAvailabilityBlocks { get; set; }
     public string TotalEarningsLabel { get; set; } = string.Empty;
+    public List<DoctorAvailabilitySlot> AvailabilityPreview { get; set; } = [];
+    public List<AppointmentCardViewModel> RecentAppointments { get; set; } = [];
 }
 
 public sealed class AdminDashboardViewModel
