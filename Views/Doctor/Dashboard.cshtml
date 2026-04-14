@@ -28,7 +28,7 @@
     <article class="stat-card glass-surface tilt-card" data-tilt>
         <span class="soft-text">Pending actions</span>
         <strong>@Model.PendingActionsCount.ToString("D2")</strong>
-        <span class="soft-text">Bookings waiting for patient payment.</span>
+        <span class="soft-text">@Model.PendingRevenueLabel still depends on payment completion.</span>
     </article>
     <article class="stat-card glass-surface tilt-card" data-tilt>
         <span class="soft-text">Monthly earnings</span>
@@ -57,42 +57,41 @@
                 <strong>@Model.CompletedAppointmentsCount.ToString("D2")</strong>
             </div>
             <div class="summary-row">
+                <span>Pending patient payments</span>
+                <strong>@Model.PendingActionsCount.ToString("D2")</strong>
+            </div>
+            <div class="summary-row">
                 <span>Next availability</span>
                 <strong>@Model.NextAvailabilityLabel</strong>
             </div>
         </div>
 
-        <div class="table-theme glass-surface">
-            <table class="table align-middle">
-                <thead>
-                    <tr>
-                        <th>Patient</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.UpcomingAppointments.Any())
-                    {
-                        @foreach (var appointment in Model.UpcomingAppointments)
-                        {
-                            <tr>
-                                <td>@appointment.PatientName</td>
-                                <td>@appointment.DateLabel</td>
-                                <td>@appointment.TimeSlot</td>
-                                <td><span class="status-tag">@appointment.Status</span></td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="4" class="text-center py-4">No upcoming appointments are scheduled right now.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="timeline-list">
+            @if (Model.UpcomingAppointments.Any())
+            {
+                @foreach (var appointment in Model.UpcomingAppointments)
+                {
+                    <article class="timeline-item">
+                        <div class="timeline-slot">@appointment.TimeSlot</div>
+                        <div class="timeline-copy">
+                            <strong>@appointment.PatientName</strong>
+                            <span>@appointment.DateLabel</span>
+                            <small class="soft-text d-block">@appointment.PaymentStatus payment, @appointment.FeeLabel</small>
+                        </div>
+                        <span class="status-tag">@appointment.Status</span>
+                    </article>
+                }
+            }
+            else
+            {
+                <article class="timeline-item">
+                    <div class="timeline-copy">
+                        <strong>No upcoming appointments are scheduled right now.</strong>
+                        <span>New patient bookings will appear here as soon as they are created.</span>
+                    </div>
+                    <span class="status-tag">Clear</span>
+                </article>
+            }
         </div>
     </article>
 
@@ -106,23 +105,24 @@
 
         <div class="d-grid gap-3 mb-4">
             <a class="btn-brand" asp-controller="Doctor" asp-action="Appointments">Review appointments</a>
+            <a class="btn-brand-outline" asp-controller="Doctor" asp-action="Appointments" asp-route-paymentFilter="Pending">Open pending payments</a>
             <a class="btn-brand-outline" asp-controller="Doctor" asp-action="Availability">View availability</a>
-            <a class="btn-brand-outline" asp-controller="Doctor" asp-action="Earnings">Review earnings</a>
             <a class="btn-brand-outline" asp-controller="Doctor" asp-action="Profile">Open profile</a>
         </div>
 
-        <div class="timeline-list">
-            @if (Model.AvailabilityPreview.Any())
+        <div class="timeline-list mb-4">
+            @if (Model.TodayAppointments.Any())
             {
-                @foreach (var slot in Model.AvailabilityPreview)
+                @foreach (var appointment in Model.TodayAppointments)
                 {
                     <article class="timeline-item">
-                        <div class="timeline-slot">@slot.DayLabel</div>
+                        <div class="timeline-slot">Today</div>
                         <div class="timeline-copy">
-                            <strong>@slot.SessionLabel</strong>
-                            <span>@slot.TimeRange</span>
+                            <strong>@appointment.PatientName</strong>
+                            <span>@appointment.TimeSlot</span>
+                            <small class="soft-text d-block">Created @appointment.CreatedAtLabel</small>
                         </div>
-                        <span class="status-tag">Active</span>
+                        <span class="status-tag">@appointment.Status</span>
                     </article>
                 }
             }
@@ -130,11 +130,35 @@
             {
                 <article class="timeline-item">
                     <div class="timeline-copy">
-                        <strong>No availability saved.</strong>
-                        <span>Schedule details will appear here once doctor timing is configured.</span>
+                        <strong>No patients in today's queue.</strong>
+                        <span>Today's consultation list is currently clear.</span>
                     </div>
-                    <span class="status-tag">Empty</span>
+                    <span class="status-tag">Open</span>
                 </article>
+            }
+        </div>
+
+        <div class="detail-card">
+            <strong>Pending payment follow-up</strong>
+            @if (Model.PendingPaymentAppointments.Any())
+            {
+                <span class="soft-text">These bookings are still waiting for patient payment completion.</span>
+                <div class="summary-list mt-3">
+                    @foreach (var appointment in Model.PendingPaymentAppointments)
+                    {
+                        <div class="summary-row">
+                            <span>
+                                <strong>@appointment.PatientName</strong>
+                                <small class="d-block">@appointment.DateLabel, @appointment.TimeSlot</small>
+                            </span>
+                            <strong>@appointment.FeeLabel</strong>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <span class="soft-text">No pending patient payments are blocking the doctor queue right now.</span>
             }
         </div>
     </article>
