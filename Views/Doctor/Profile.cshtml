@@ -105,10 +105,11 @@
                 <span>Profile rating</span>
                 <strong>@Model.Doctor.Rating.ToString("0.0") / 5</strong>
             </div>
-            <div class="summary-row">
-                <span>Bio</span>
-                <strong>@Model.Doctor.Bio</strong>
-            </div>
+        </div>
+
+        <div class="detail-card mt-4">
+            <strong>Bio</strong>
+            <span class="soft-text">@Model.Doctor.Bio</span>
         </div>
     </article>
 </section>
