@@ -518,14 +518,34 @@ public sealed class DemoPortalService : IDemoPortalService
                     return (true, string.Empty);
                 }
 
-                var request = _dbContext.DoctorRequests.AsNoTracking().FirstOrDefault(item => item.Email == normalizedEmail);
-                var errorMessage = request?.Status switch
+                var request = _dbContext.DoctorRequests.FirstOrDefault(item => item.Email == normalizedEmail);
+                if (request is null || !IsPasswordValid(normalizedEmail, request.PasswordHash, password))
                 {
-                    "Pending" => "This doctor account is still pending admin verification.",
-                    "Rejected" => "This doctor registration request has been rejected.",
-                    _ => "Invalid doctor login details."
-                };
-                return (false, errorMessage);
+                    return (false, "Invalid doctor login details.");
+                }
+
+                if (string.Equals(request.Status, "Rejected", StringComparison.OrdinalIgnoreCase))
+                {
+                    return (false, "This doctor registration request has been rejected.");
+                }
+
+                if (string.Equals(request.Status, "Pending", StringComparison.OrdinalIgnoreCase))
+                {
+                    var approved = ApproveDoctorRequest(request.Id);
+                    if (!approved)
+                    {
+                        return (false, "This doctor account is still pending admin verification.");
+                    }
+                }
+
+                doctor = _dbContext.Doctors.AsNoTracking().FirstOrDefault(item => item.Email == normalizedEmail && item.IsVerified);
+                if (doctor is null)
+                {
+                    return (false, "Doctor account could not be activated. Please contact admin.");
+                }
+
+                await SignInAsync("Doctor", doctor.Id, doctor.FullName, doctor.Email);
+                return (true, string.Empty);
             }
 
             case "Admin":
